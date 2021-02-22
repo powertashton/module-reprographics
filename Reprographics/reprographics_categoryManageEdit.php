@@ -35,16 +35,15 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     }
     //TODO: TITLE OF THE CATEGORY 
     $subCategoryGateway = $container->get(SubCategoryGateway::class);
-    $subCategoryData = $subCategoryGateway->selectSubCategories()->toDataSet();
+    $subCategoryData = $subCategoryGateway->selectSubCategories()->toDataSet(); //TODO: MAKE THE GATEWAY A WHERE PLS
     $table = DataTable::create('subcategories');
         $table->setTitle('SubCategories');
 
-        $table->addHeaderAction('add', __('Add'))//TODO: add param for the category
+        $table->addHeaderAction('add', __('Add'))
                 ->addParam('categoryID', $_GET['categoryID'])
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageAdd.php');
 
         $table->addColumn('subCategoryName', __('Subategory Name'));
-        //TODO: SHOW THE SUBCATS (and maybe even the items?????)
         $table->addActionColumn()
                 ->addParam('subCategoryID')
                 ->format(function ($department, $actions) use ($gibbon, $subCategoryData) {
