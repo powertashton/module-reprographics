@@ -18,7 +18,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-
 use Gibbon\Tables\DataTable;
 use Gibbon\Module\Reprographics\Domain\CategoryGateway;
 
@@ -28,25 +27,25 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    //TODO: TABLE WITH ALL THE MAIN CATEGORIES 
+    //TODO: TITLE OF THE CATEGORY 
     $categoryGateway = $container->get(CategoryGateway::class);
     $categoryData = $categoryGateway->selectCategories()->toDataSet();
     $table = DataTable::create('categories');
-        $table->setTitle('Categories');
+        $table->setTitle('SubCategories');
 
         $table->addHeaderAction('add', __('Add'))
-                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageAdd.php');
+                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageAdd.php');
 
-        $table->addColumn('name', __('Category Name'));
+        $table->addColumn('name', __('Subategory Name'));
         //TODO: SHOW THE SUBCATS (and maybe even the items?????)
         $table->addActionColumn()
-                ->addParam('categoryID')
+                ->addParam('subcategoryID')
                 ->format(function ($department, $actions) use ($gibbon, $categoryData) {
                     $actions->addAction('edit', __('Edit'))
-                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageEdit.php');
+                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageEdit.php');
                     $actions->addAction('delete', __('Delete'))
                             ->modalWindow()
-                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageDelete.php');
+                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageDelete.php');
                 });
         
         echo $table->render($categoryData);

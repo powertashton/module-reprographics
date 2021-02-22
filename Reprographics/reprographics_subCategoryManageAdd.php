@@ -37,8 +37,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     
     //TODO: TITLE OF THE CATEGORY
     $row = $form->addRow();
-        $row->addLabel('categoryName', __('Category Name'));
-        $row->addTextField('categoryName')
+        $row->addLabel('subCategoryName', __('SubCategory Name'));
+        $row->addTextField('subCategoryName')
             ->maxLength(55)
             ->required(); //TODO: UNIQUE FIELD THIS
     
