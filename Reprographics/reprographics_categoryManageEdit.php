@@ -27,6 +27,12 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
+    //TODO: Specific category's subcategories rather than all categories lmao
+    $categoryID = $_GET['categoryID'] ?? '';
+    
+    if (empty($categoryID)) {
+        $page->addError(__('No category Selected.'));
+    }
     //TODO: TITLE OF THE CATEGORY 
     $subCategoryGateway = $container->get(SubCategoryGateway::class);
     $subCategoryData = $subCategoryGateway->selectSubCategories()->toDataSet();

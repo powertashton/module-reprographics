@@ -37,8 +37,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $table->addHeaderAction('add', __('Add'))
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageAdd.php');
 
-        $table->addColumn('name', __('Category Name'));
-        //TODO: SHOW THE SUBCATS (and maybe even the items?????)
+        $table->addColumn('categoryName', __('Category Name'));
+        //TODO: SHOW THE SUBCATS 
         $table->addActionColumn()
                 ->addParam('categoryID')
                 ->format(function ($department, $actions) use ($gibbon, $categoryData) {
