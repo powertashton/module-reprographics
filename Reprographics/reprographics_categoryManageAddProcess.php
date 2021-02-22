@@ -23,7 +23,7 @@ include './moduleFunctions.php';
 
 $URL = $gibbon->session->get('absoluteURL') . '/index.php?q=/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManage.php';
 
-if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManage.php')) {
+if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManageAdd.php')) {
     // Access denied
     $URL = $URL.'&return=error0';
     header("Location: {$URL}");

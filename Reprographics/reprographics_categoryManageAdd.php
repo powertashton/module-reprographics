@@ -17,17 +17,24 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-use Gibbon\Forms\Prefab\DeleteForm;
+use Gibbon\Forms\Form;
 
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
 
-if (!isActionAccessible($guid, $connection2, "/modules/Module Name/name_delete.php")) {
+$page->breadcrumbs->add(__('Order Items'));
+
+if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManageAdd.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
-}
-else {
-    $ID = $_POST['ID']; // The ID / primary key param posted from the name_view page.
-    $form = DeleteForm::createForm($gibbon->session->get('absoluteURL') . '/index.php?q=/modules/' . $gibbon->session->get('module') . '/name.php?ID=$ID');
+} else {
+    //FORM TO CREATE A CATEGORY
+    $moduleName = $gibbon->session->get('module');
+    $form = Form::create('addCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_categoryManageAddProcess.php', 'post');
+    $form->addHiddenValue('address', $gibbon->session->get('address'));
+    $row = $form->addRow();
+        $row->addFooter();
+        $row->addSubmit();
+
     echo $form->getOutput();
 }	
