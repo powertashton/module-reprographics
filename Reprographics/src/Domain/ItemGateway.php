@@ -19,7 +19,7 @@ class ItemGateway extends QueryableGateway //Replace NameGateway with the name o
     private static $primaryKey = 'itemID'; //The primaryKey of said table
     private static $searchableColumns = []; // Optional: Array of Columns to be searched when using the search filter
     
-    public function selectItems() {
+    public function selectItems() { //TODO: WHERE SUBCATEGORY ID IS
         $select = $this
             ->newSelect()
             ->from('Item')
