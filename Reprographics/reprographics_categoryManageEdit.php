@@ -37,10 +37,10 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 ->addParam('categoryID', $_GET['categoryID'])
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageAdd.php');
 
-        $table->addColumn('name', __('Subategory Name'));
+        $table->addColumn('subCategoryName', __('Subategory Name'));
         //TODO: SHOW THE SUBCATS (and maybe even the items?????)
         $table->addActionColumn()
-                ->addParam('subcategoryID')
+                ->addParam('subCategoryID')
                 ->format(function ($department, $actions) use ($gibbon, $subCategoryData) {
                     $actions->addAction('edit', __('Edit'))
                             ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageEdit.php');

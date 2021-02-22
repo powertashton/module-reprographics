@@ -17,12 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-use Gibbon\Module\Reprographics\Domain\CategoryGateway;
+use Gibbon\Module\Reprographics\Domain\SubCategoryGateway;
 // Module includes
 include '../../gibbon.php';
 
 
-$URL = $gibbon->session->get('absoluteURL') . '/index.php?q=/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManage.php';
+$URL = $gibbon->session->get('absoluteURL') . '/index.php?q=/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageEdit.php';
 
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManage.php')) {
     // Access denied
@@ -30,10 +30,11 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     header("Location: {$URL}");
 } else {
     // Proceed!
-    $categoryName = $_POST['categoryName']; // The variables you will be processing
+    $subCategoryName = $_POST['subCategoryName']; // The variables you will be processing
+    $categoryID = $_POST['categoryID'];   
     //TODO: THIS
     // Check that your required variables are present
-    if (empty($categoryName)) { 
+    if (empty($subCategoryName)) { 
         $URL = $URL.'&return=error3';
         header("Location: {$URL}");
         exit;
