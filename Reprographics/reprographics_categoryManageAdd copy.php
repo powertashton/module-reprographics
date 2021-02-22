@@ -28,17 +28,14 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    //FORM TO CREATE A SUB CATEGORY
+    //FORM TO CREATE A CATEGORY
     $moduleName = $gibbon->session->get('module');
-    $form = Form::create('addSubCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_subCategoryManageAddProcess.php', 'post');
-    
+    $form = Form::create('addCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_categoryManageAddProcess.php', 'post');
     $form->addHiddenValue('address', $gibbon->session->get('address'));
-    $form->addHiddenValue('categoryID', $_GET('categoryID'));
     
-    //TODO: TITLE OF THE CATEGORY
     $row = $form->addRow();
-        $row->addLabel('subCategoryName', __('SubCategory Name'));
-        $row->addTextField('subCategoryName')
+        $row->addLabel('categoryName', __('Category Name'));
+        $row->addTextField('categoryName')
             ->maxLength(55)
             ->required(); //TODO: UNIQUE FIELD THIS
     

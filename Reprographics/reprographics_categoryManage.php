@@ -34,7 +34,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $table = DataTable::create('categories');
         $table->setTitle('Categories');
 
-        $table->addHeaderAction('add', __('Add'))
+        $table->addHeaderAction('add', __('Add')) 
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageAdd.php');
 
         $table->addColumn('name', __('Category Name'));

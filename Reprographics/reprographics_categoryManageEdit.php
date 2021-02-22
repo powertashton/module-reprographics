@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 use Gibbon\Tables\DataTable;
-use Gibbon\Module\Reprographics\Domain\CategoryGateway;
+use Gibbon\Module\Reprographics\Domain\SubCategoryGateway;
 
 $page->breadcrumbs->add(__('Order Items'));
 
@@ -28,19 +28,19 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	$page->addError(__('You do not have access to this action.'));
 } else {
     //TODO: TITLE OF THE CATEGORY 
-    $categoryGateway = $container->get(CategoryGateway::class);
-    $categoryData = $categoryGateway->selectCategories()->toDataSet();
-    $table = DataTable::create('categories');
+    $subCategoryGateway = $container->get(SubCategoryGateway::class);
+    $subCategoryData = $subCategoryGateway->selectSubCategories()->toDataSet();
+    $table = DataTable::create('subcategories');
         $table->setTitle('SubCategories');
 
-        $table->addHeaderAction('add', __('Add'))
+        $table->addHeaderAction('add', __('Add'))//TODO: add param for the category
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageAdd.php');
 
         $table->addColumn('name', __('Subategory Name'));
         //TODO: SHOW THE SUBCATS (and maybe even the items?????)
         $table->addActionColumn()
                 ->addParam('subcategoryID')
-                ->format(function ($department, $actions) use ($gibbon, $categoryData) {
+                ->format(function ($department, $actions) use ($gibbon, $subCategoryData) {
                     $actions->addAction('edit', __('Edit'))
                             ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageEdit.php');
                     $actions->addAction('delete', __('Delete'))
@@ -48,5 +48,5 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                             ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageDelete.php');
                 });
         
-        echo $table->render($categoryData);
+        echo $table->render($subCategoryData);
 }	
