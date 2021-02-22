@@ -20,6 +20,7 @@ class SubCategoryGateway extends QueryableGateway //Replace NameGateway with the
     private static $searchableColumns = []; // Optional: Array of Columns to be searched when using the search filter
     
     public function selectSubCategories($categoryID) { 
+        $select = $this
             ->newSelect()
             ->from('ItemSubCategory')
             ->cols(['subCategoryID', 'categoryID', 'subCategoryName'])

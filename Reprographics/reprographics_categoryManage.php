@@ -21,6 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 use Gibbon\Tables\DataTable;
 use Gibbon\Module\Reprographics\Domain\CategoryGateway;
+use Gibbon\Module\Reprographics\Domain\SubCategoryGateway;
 
 $page->breadcrumbs->add(__('Order Items'));
 
@@ -31,6 +32,17 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     //TODO: TABLE WITH ALL THE MAIN CATEGORIES 
     $categoryGateway = $container->get(CategoryGateway::class);
     $categoryData = $categoryGateway->selectCategories()->toDataSet();
+    $subcategoryGateway = $container->get(SubcategoryGateway::class);   
+    
+    $formatCategoryList = function($row) use ($subcategoryGateway) {
+            $categories = $subcategoryGateway->selectBy(['categoryID' => $row['categoryID']])->fetchAll();
+            if (count($categories) < 1) {
+                return __('This department does not have any subcategories.');
+            }
+            return implode(', ', array_column($categories, 'subCategoryName'));
+        };
+    
+    
     $table = DataTable::create('categories');
         $table->setTitle('Categories');
 
@@ -38,7 +50,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageAdd.php');
 
         $table->addColumn('categoryName', __('Category Name'));
-        //TODO: SHOW THE SUBCATS 
+        $table->addColumn('categories', __('Subcategories'))->format($formatCategoryList);;
         $table->addActionColumn()
                 ->addParam('categoryID')
                 ->format(function ($department, $actions) use ($gibbon, $categoryData) {
