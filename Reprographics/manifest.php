@@ -48,7 +48,8 @@ $moduleTables[$tables++] = 'CREATE TABLE `Item` (
     `name` varchar(55) NOT NULL,
     PRIMARY KEY (`itemID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
-
+//TODO: Department and Staff tables
+//TODO: productOut table
 
 // Action rows 
 // One array per action
@@ -93,3 +94,4 @@ $actionRows[$actionCount++] = [
     'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
     'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
 ];
+//TODO: organise this more and set stuff up properly lmao

@@ -31,8 +31,10 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     //FORM TO CREATE A CATEGORY
     $moduleName = $gibbon->session->get('module');
     $form = Form::create('addSubCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_subCategoryManageAddProcess.php', 'post');
+    
     $form->addHiddenValue('address', $gibbon->session->get('address'));
     $form->addHiddenValue('categoryID', $_POST('categoryID'));
+    
     //TODO: TITLE OF THE CATEGORY
     $row = $form->addRow();
         $row->addLabel('categoryName', __('Category Name'));

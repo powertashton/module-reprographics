@@ -19,4 +19,6 @@ class CategoryGateway extends QueryableGateway //Replace NameGateway with the na
     private static $primaryKey = 'categoryID'; //The primaryKey of said table
     private static $searchableColumns = []; // Optional: Array of Columns to be searched when using the search filter
     
+    
+    //TODO: SELECT CATEGORIES
 }

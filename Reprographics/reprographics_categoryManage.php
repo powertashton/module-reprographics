@@ -28,5 +28,5 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    //TABLE WITH ALL THE MAIN CATEGORIES 
+    //TODO: TABLE WITH ALL THE MAIN CATEGORIES 
 }	

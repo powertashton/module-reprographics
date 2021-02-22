@@ -28,6 +28,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
+    //TODO: Select items from category...
     $moduleName = $gibbon->session->get('module');
     $form = Form::create('orderItems', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_orderProcess.php', 'post');
     $form->addHiddenValue('address', $gibbon->session->get('address'));
