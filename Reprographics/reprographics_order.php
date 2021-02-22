@@ -17,17 +17,23 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-use Gibbon\Tables\DataTable;
-use Gibbon\Domain\DataSet;
+use Gibbon\Forms\Form;
 
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
+
+$page->breadcrumbs->add(__('Order Items'));
 
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_order.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    // SQL or Gateway query, as a dataset
-    // For a OO datatable, see https:// gist.github.com/SKuipers/e176454a2feb555126c2147865bd0626
-    // Don't forget to put header and column actions if you're using add/edit/delete pages AND include the ID/primary key as a param
+    $moduleName = $gibbon->session->get('module');
+    $form = Form::create('orderItems', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_orderProcess.php', 'post');
+    $form->addHiddenValue('address', $gibbon->session->get('address'));
+    $row = $form->addRow();
+        $row->addFooter();
+        $row->addSubmit();
+
+    echo $form->getOutput();
 }	
