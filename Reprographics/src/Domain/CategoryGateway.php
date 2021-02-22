@@ -23,7 +23,7 @@ class CategoryGateway extends QueryableGateway //Replace NameGateway with the na
         $select = $this
             ->newSelect()
             ->from('ItemCategory')
-            ->cols(['categoryID', 'name'])
+            ->cols(['categoryID', 'categoryName'])
             ->orderBy(['categoryID']);
 
         return $this->runSelect($select);

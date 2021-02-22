@@ -33,7 +33,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $form = Form::create('addSubCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_subCategoryManageAddProcess.php', 'post');
     
     $form->addHiddenValue('address', $gibbon->session->get('address'));
-    $form->addHiddenValue('categoryID', $_GET('categoryID'));
+    $form->addHiddenValue('categoryID', $_GET['categoryID']);
     
     //TODO: TITLE OF THE CATEGORY
     $row = $form->addRow();

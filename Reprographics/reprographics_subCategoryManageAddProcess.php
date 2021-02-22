@@ -39,11 +39,11 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         exit;
     } 
     try {
-        $data = ['name' => $subCategoryName, 'categoryID' => $categoryID];
+        $data = ['subCategoryName' => $subCategoryName, 'categoryID' => $categoryID];
         $subCategoryGateway = $container->get(SubCategoryGateway::class);
         $subCategoryID = $subCategoryGateway->insert($data);
             if ($categoryID === false) {
-                throw new PDOException('Could not insert category.');
+                throw new PDOException('Could not insert subcategory.');
             }
      } catch (PDOException $e) {
             $URL .= '&return=error2';
@@ -52,6 +52,6 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     }
         
     // Your SQL or Gateway insert query
-    $URL .= "&return=success0&categoryID=$categoryID";
+    $URL .= "&return=success0&categoryID=$categoryID&subCategoryID=$subCategoryID";
     header("Location: {$URL}");
 }

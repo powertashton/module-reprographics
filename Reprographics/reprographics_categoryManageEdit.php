@@ -34,6 +34,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $table->setTitle('SubCategories');
 
         $table->addHeaderAction('add', __('Add'))//TODO: add param for the category
+                ->addParam('categoryID', $_GET['categoryID'])
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageAdd.php');
 
         $table->addColumn('name', __('Subategory Name'));

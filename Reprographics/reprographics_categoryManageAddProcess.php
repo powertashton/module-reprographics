@@ -39,7 +39,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         exit;
     } 
     try {
-        $data = ['name' => $categoryName];
+        $data = ['categoryName' => $categoryName];
         $categoryGateway = $container->get(CategoryGateway::class);
         $categoryID = $categoryGateway->insert($data);
             if ($categoryID === false) {

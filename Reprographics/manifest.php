@@ -33,19 +33,20 @@ $tables = 0;
 // Module tables & gibbonSettings entries
 $moduleTables[$tables++] = 'CREATE TABLE `ItemCategory` (
     `categoryID` int(12) unsigned zerofill NOT NULL AUTO_INCREMENT,
-    `name` varchar(55) NOT NULL,
+    `categoryName` varchar(55) NOT NULL,
     PRIMARY KEY (`categoryID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 $moduleTables[$tables++] = 'CREATE TABLE `ItemSubCategory` (
     `subCategoryID` int(12) unsigned zerofill NOT NULL AUTO_INCREMENT,
     `categoryID` int(12) unsigned zerofill NOT NULL,
-    `name` varchar(55) NOT NULL,
+    `subCategoryName` varchar(55) NOT NULL,
     PRIMARY KEY (`subCategoryID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;'; 
 $moduleTables[$tables++] = 'CREATE TABLE `Item` (
     `itemID` int(12) unsigned zerofill NOT NULL AUTO_INCREMENT,
     `subCategoryID` int(12) unsigned zerofill NOT NULL,
-    `name` varchar(55) NOT NULL,
+    `categoryID` int(12) unsigned zerofill NOT NULL,
+    `itemName` varchar(55) NOT NULL,
     PRIMARY KEY (`itemID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 //TODO: Department and Staff tables
@@ -58,7 +59,7 @@ $actionCount = 0;
 $actionRows[$actionCount++] = [
     'name'                      => 'Order Items', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Items', // Optional: subgroups for the right hand side module menu
+    'category'                  => 'Order', // Optional: subgroups for the right hand side module menu
     'description'               => 'Allows the user to order items', // Text description
     'URLList'                   => 'reprographics_order.php', // List of pages included in this action
     'entryURL'                  => 'reprographics_order.php', // The landing action for the page.
@@ -76,10 +77,10 @@ $actionRows[$actionCount++] = [
 ];
 
 $actionRows[$actionCount++] = [
-    'name'                      => 'Manage Items', // The name of the action (appears to user in the right hand side module menu)
+    'name'                      => 'Manage Categories', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => 'Items', // Optional: subgroups for the right hand side module menu
-    'description'               => 'Allows the user to manage items', // Text description
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows the user to manage categories', // Text description
     'URLList'                   => 'reprographics_categoryManage.php', // List of pages included in this action
     'entryURL'                  => 'reprographics_categoryManage.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
@@ -94,4 +95,25 @@ $actionRows[$actionCount++] = [
     'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
     'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
 ];
+
+$actionRows[$actionCount++] = [
+    'name'                      => 'Manage Items', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows the user to manage items', // Text description
+    'URLList'                   => 'reprographics_itemsManage.php', // List of pages included in this action
+    'entryURL'                  => 'reprographics_itemsManage.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'N', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
+];
+
 //TODO: organise this more and set stuff up properly lmao

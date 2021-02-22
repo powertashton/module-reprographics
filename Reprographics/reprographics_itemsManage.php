@@ -20,28 +20,28 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 use Gibbon\Tables\DataTable;
-use Gibbon\Module\Reprographics\Domain\CategoryGateway;
+use Gibbon\Module\Reprographics\Domain\ItemGateway;
 
 $page->breadcrumbs->add(__('Order Items'));
-
+//TODO: REQUIRE CATEGORIES TO BE SET UP
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManage.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    //TODO: TABLE WITH ALL THE MAIN CATEGORIES 
-    $categoryGateway = $container->get(CategoryGateway::class);
-    $categoryData = $categoryGateway->selectCategories()->toDataSet();
-    $table = DataTable::create('categories');
-        $table->setTitle('Categories');
 
-        $table->addHeaderAction('add', __('Add'))
+    $itemGateway = $container->get(ItemGateway::class);
+    $itemData = $itemGateway->selectItems()->toDataSet();
+    $table = DataTable::create('items');
+        $table->setTitle('Items');
+
+        $table->addHeaderAction('add', __('Add')) 
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageAdd.php');
 
         $table->addColumn('name', __('Category Name'));
-        //TODO: SHOW THE SUBCATS (and maybe even the items?????)
+        //TODO: ADD COLUMNS FOR THE CATS
         $table->addActionColumn()
                 ->addParam('categoryID')
-                ->format(function ($department, $actions) use ($gibbon, $categoryData) {
+                ->format(function ($department, $actions) use ($gibbon, $itemData) {
                     $actions->addAction('edit', __('Edit'))
                             ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageEdit.php');
                     $actions->addAction('delete', __('Delete'))
@@ -49,5 +49,5 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                             ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageDelete.php');
                 });
         
-        echo $table->render($categoryData);
+        echo $table->render($itemData);
 }	
