@@ -22,7 +22,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // Basic variables
 $name        = 'Reprographics';            // The name of the module as it appears to users. Needs to be unique to installation. Also the name of the folder that holds the unit.
 $description = 'A Reprographic module for Gibbon';            // Short text description
-$entryURL    = "index.php";   // The landing page for the unit, used in the main menu
+$entryURL    = "reprographics_order.php";   // The landing page for the unit, used in the main menu
 $type        = "Additional";  // Do not change.
 $category    = 'Other';            // The main menu area to place the module in
 $version     = '0.0.01';            // Version number
@@ -31,18 +31,18 @@ $url         = 'https://github.com/powertashton/module-reprographics';          
 
 $tables = 0;
 // Module tables & gibbonSettings entries
-$moduleTables[$tables++] = 'CREATE TABLE `ItemCategory`(
+$moduleTables[$tables++] = 'CREATE TABLE `ItemCategory` (
     `categoryID` int(12) unsigned zerofill NOT NULL AUTO_INCREMENT,
     `name` varchar(55) NOT NULL,
     PRIMARY KEY (`categoryID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
-$moduleTables[$tables++] = 'CREATE TABLE `ItemSubCategory`
+$moduleTables[$tables++] = 'CREATE TABLE `ItemSubCategory` (
     `subCategoryID` int(12) unsigned zerofill NOT NULL AUTO_INCREMENT,
     `categoryID` int(12) unsigned zerofill NOT NULL,
     `name` varchar(55) NOT NULL,
     PRIMARY KEY (`subCategoryID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;'; 
-$moduleTables[$tables++] = 'CREATE TABLE `Item`
+$moduleTables[$tables++] = 'CREATE TABLE `Item` (
     `itemID` int(12) unsigned zerofill NOT NULL AUTO_INCREMENT,
     `subCategoryID` int(12) unsigned zerofill NOT NULL,
     `name` varchar(55) NOT NULL,
@@ -52,13 +52,15 @@ $moduleTables[$tables++] = 'CREATE TABLE `Item`
 
 // Action rows 
 // One array per action
-$actionRows[] = [
-    'name'                      => '', // The name of the action (appears to user in the right hand side module menu)
+$actionCount = 0;
+
+$actionRows[$actionCount++] = [
+    'name'                      => 'Order Items', // The name of the action (appears to user in the right hand side module menu)
     'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
-    'category'                  => '', // Optional: subgroups for the right hand side module menu
-    'description'               => '', // Text description
-    'URLList'                   => '', // List of pages included in this action
-    'entryURL'                  => '', // The landing action for the page.
+    'category'                  => 'Items', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows the user to order items', // Text description
+    'URLList'                   => 'reprographics_order.php', // List of pages included in this action
+    'entryURL'                  => 'reprographics_order.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
     'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
     'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
@@ -72,5 +74,3 @@ $actionRows[] = [
     'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
 ];
 
-// Hooks
-$hooks[] = ''; // Serialised array to create hook and set options. See Hooks documentation online.
