@@ -19,11 +19,13 @@ class SubCategoryGateway extends QueryableGateway //Replace NameGateway with the
     private static $primaryKey = 'subCategoryID'; //The primaryKey of said table
     private static $searchableColumns = []; // Optional: Array of Columns to be searched when using the search filter
     
-    public function selectSubCategories() { //TODO: WHERE CATEGORY ID IS
+    public function selectSubCategories($categoryID) { //TODO: WHERE CATEGORY ID IS
         $select = $this
             ->newSelect()
             ->from('ItemSubCategory')
             ->cols(['subCategoryID', 'categoryID', 'subCategoryName'])
+            ->where('categoryID=:categoryID')
+            ->bindValue('categoryID', $categoryID)
             ->orderBy(['subCategoryID']);
 
         return $this->runSelect($select);

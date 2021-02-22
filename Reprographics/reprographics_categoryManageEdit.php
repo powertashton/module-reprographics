@@ -35,7 +35,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     }
     //TODO: TITLE OF THE CATEGORY 
     $subCategoryGateway = $container->get(SubCategoryGateway::class);
-    $subCategoryData = $subCategoryGateway->selectSubCategories()->toDataSet(); //TODO: MAKE THE GATEWAY A WHERE PLS
+    $subCategoryData = $subCategoryGateway->selectSubCategories($categoryID)->toDataSet(); //TODO: MAKE THE GATEWAY A WHERE PLS
     $table = DataTable::create('subcategories');
         $table->setTitle('SubCategories');
 
