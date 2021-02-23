@@ -18,6 +18,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 use Gibbon\Forms\Form;
+use Gibbon\Module\Reprographics\Domain\ItemGateway;
 
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
@@ -35,25 +36,19 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     
     $form->setClass('noIntBorder overflow-visible fullWidth standardForm');
     
+    $itemGateway = $container->get(ItemGateway::class);
+    $itemData = $itemGateway->selectItems()->toDataSet()->toArray();
+
+    $options = array_reduce($itemData, function ($group, $item) {
+      $group[$item['categoryName']][$item['subCategoryName']][$item['itemID']] = $item['itemName'];
+      return $group;
+    }, []);
+    
     $row = $form->addRow();
         $row->addLabel('test', __('Test'));
         $row->addDropdown('test')
             ->placeholder('Please Select...')
-            ->fromArray([
-                'test' => 'Test',
-                'Test Group' => [
-                    'a' => 'Alpha',
-                    'Sub Group' => [
-                        'b' => 'Beta',
-                        'Sub Sub Group' => [
-                            'c' => 'Charlie',
-                            'Sub Sub Sub Group' => [
-                                'd' => 'Delta'
-                            ]
-                        ]
-                    ]
-                ]
-            ]);
+            ->fromArray($options);
     
     $row = $form->addRow();
         $row->addFooter();
