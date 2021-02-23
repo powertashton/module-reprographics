@@ -63,7 +63,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 			
 			$(".dropdown").on("click", "div[class=\'leaf\']", function() {
                 $('.currentStock').show();
-                $('.currentStock input').val('aaa');
+                $('.currentStock input').val( $(".dropdown div[id=\'header\']").text() );
             });
 			</script>
 <?php
