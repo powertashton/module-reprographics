@@ -35,7 +35,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $table->setTitle('Items');
 
         $table->addHeaderAction('add', __('Add')) 
-                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_categoryManageAdd.php');
+                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_itemManageAdd.php');
 
         $table->addColumn('name', __('Category Name'));
         //TODO: ADD COLUMNS FOR THE CATS

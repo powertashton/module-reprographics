@@ -22,38 +22,24 @@ use Gibbon\Forms\Form;
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
 
-$page->breadcrumbs->add(__('Order Items'));
+$page->breadcrumbs->add(__('Add Category'));
 
-if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_order.php')) {
+if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManage.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    //TODO: Select items from category...
+    //FORM TO CREATE A CATEGORY
     $moduleName = $gibbon->session->get('module');
-    $form = Form::create('orderItems', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_orderProcess.php', 'post');
+    $form = Form::create('addCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_categoryManageAddProcess.php', 'post');
     $form->addHiddenValue('address', $gibbon->session->get('address'));
     
-    $form->setClass('noIntBorder overflow-visible fullWidth standardForm');
+    //TODO: select category, chainedTo subcategory
     
     $row = $form->addRow();
-        $row->addLabel('test', __('Test'));
-        $row->addDropdown('test')
-            ->placeholder('Please Select...')
-            ->fromArray([
-                'test' => 'Test',
-                'Test Group' => [
-                    'a' => 'Alpha',
-                    'Sub Group' => [
-                        'b' => 'Beta',
-                        'Sub Sub Group' => [
-                            'c' => 'Charlie',
-                            'Sub Sub Sub Group' => [
-                                'd' => 'Delta'
-                            ]
-                        ]
-                    ]
-                ]
-            ]);
+        $row->addLabel('categoryName', __('Category Name'));
+        $row->addTextField('categoryName')
+            ->maxLength(55)
+            ->required(); 
     
     $row = $form->addRow();
         $row->addFooter();

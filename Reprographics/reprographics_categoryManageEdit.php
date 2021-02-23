@@ -27,7 +27,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    //TODO: Specific category's subcategories rather than all categories lmao
+    
     $categoryID = $_GET['categoryID'] ?? '';
     
     if (empty($categoryID)) {
@@ -35,8 +35,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     }
     //TODO: TITLE OF THE CATEGORY 
     $subCategoryGateway = $container->get(SubCategoryGateway::class);
-    $subCategoryData = $subCategoryGateway->selectSubCategories($categoryID)->toDataSet(); //TODO: MAKE THE GATEWAY A WHERE PLS
-    
+    $subCategoryData = $subCategoryGateway->selectSubCategories($categoryID)->toDataSet(); 
         $table = DataTable::create('subcategories');
         $table->setTitle('SubCategories');
 
@@ -46,6 +45,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
         $table->addColumn('subCategoryName', __('Subategory Name'));
         $table->addActionColumn()
+                ->addParam('categoryID')
                 ->addParam('subCategoryID')
                 ->format(function ($department, $actions) use ($gibbon, $subCategoryData) {
                     $actions->addAction('edit', __('Edit'))
