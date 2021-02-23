@@ -48,8 +48,6 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $row->addLabel('subCategoryID', __('SubCategory'));
         $row->addSelect('subCategoryID')->fromQueryChained($pdo, $sql1, $data1, 'categoryID')->placeholder()->isRequired();
         
-                
-    //TODO: select category, chainedTo subcategory
     
     $row = $form->addRow();
         $row->addLabel('itemName', __('Item Name'));
