@@ -47,6 +47,9 @@ $moduleTables[$tables++] = 'CREATE TABLE `Item` (
     `subCategoryID` int(12) unsigned zerofill NOT NULL,
     `categoryID` int(12) unsigned zerofill NOT NULL,
     `itemName` varchar(55) NOT NULL,
+    `salePrice` int(12) NOT NULL,
+    `realPrice` int(12) NOT NULL,
+    `stock` int(12) NOT NULL,
     PRIMARY KEY (`itemID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 //TODO: Department and Staff tables

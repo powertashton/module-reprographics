@@ -57,6 +57,9 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             ->maxLength(55)
             ->required(); 
     
+    //TODO: prices (real and sale) and quantity 
+    //$row->addNumber('hhh')->decimalPlaces(0)->maximum(99)->maxLength(2)->setValue('0');
+    
     $row = $form->addRow();
         $row->addFooter();
         $row->addSubmit();
