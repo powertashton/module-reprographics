@@ -29,16 +29,16 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     header("Location: {$URL}");
 } else {
     // Proceed!
-    $thing = $_POST['thing']; // The variables you will be processing
+    $test = $_POST['test']; // The variables you will be processing
     //TODO: THIS
     // Check that your required variables are present
-    if (empty($thing)) { 
+    if (empty($test)) { 
         $URL = $URL.'&return=error3';
         header("Location: {$URL}");
         exit;
     } 
     
     // Your SQL or Gateway insert query
-    $URL .= "&return=success0&editID=$AI";
+    $URL .= "&return=success0&test=$test";
     header("Location: {$URL}");
 }

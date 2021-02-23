@@ -37,8 +37,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $table->addHeaderAction('add', __('Add')) 
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_itemsManageAdd.php');
         //TODO: USE GATEWAYS TO HAVE THIS BE NAMES NOT IDS
-        $table->addColumn('categoryID', __('Category'));
-        $table->addColumn('subCategoryID', __('SubCategory'));
+        $table->addColumn('categoryName', __('Category'));
+        $table->addColumn('subCategoryName', __('SubCategory'));
         $table->addColumn('itemName', __('Item Name'));
         $table->addActionColumn()
                 ->addParam('categoryID')
