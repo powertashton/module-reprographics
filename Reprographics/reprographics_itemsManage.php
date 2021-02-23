@@ -22,7 +22,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 use Gibbon\Tables\DataTable;
 use Gibbon\Module\Reprographics\Domain\ItemGateway;
 
-$page->breadcrumbs->add(__('Order Items'));
+$page->breadcrumbs->add(__('View Items'));
 //TODO: REQUIRE CATEGORIES TO BE SET UP
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManage.php')) {
 	// Access denied
@@ -35,10 +35,11 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $table->setTitle('Items');
 
         $table->addHeaderAction('add', __('Add')) 
-                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_itemManageAdd.php');
-
-        $table->addColumn('name', __('Category Name'));
-        //TODO: ADD COLUMNS FOR THE CATS
+                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_itemsManageAdd.php');
+        //TODO: USE GATEWAYS TO HAVE THIS BE NAMES NOT IDS
+        $table->addColumn('categoryID', __('Category'));
+        $table->addColumn('subCategoryID', __('SubCategory'));
+        $table->addColumn('itemName', __('Item Name'));
         $table->addActionColumn()
                 ->addParam('categoryID')
                 ->format(function ($department, $actions) use ($gibbon, $itemData) {

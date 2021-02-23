@@ -18,26 +18,42 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 use Gibbon\Forms\Form;
+use Gibbon\Forms\DatabaseFormFactory;
 
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
 
-$page->breadcrumbs->add(__('Add Category'));
-
+$page->breadcrumbs->add(__('Add Item'));
+//TODO: REQUIRE CATEGORIES TO BE SET UP
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManage.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
     //FORM TO CREATE A CATEGORY
     $moduleName = $gibbon->session->get('module');
-    $form = Form::create('addCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_categoryManageAddProcess.php', 'post');
+    $form = Form::create('addCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_itemManageAddProcess.php', 'post');
+    $form->setFactory(DatabaseFormFactory::create($pdo));
     $form->addHiddenValue('address', $gibbon->session->get('address'));
     
+    $data = array();
+    $sql = "SELECT categoryID as value, categoryName as name FROM ItemCategory";
+                    
+    $row = $form->addRow();
+        $row->addLabel('categoryID', __('Category'));
+        $row->addSelect('categoryID')->fromQuery($pdo, $sql, $data)->placeholder()->isRequired();                
+    
+    $data1 = array();
+    $sql1 = "SELECT categoryID as chainedTo, subCategoryID as value, subCategoryName as name FROM ItemSubCategory";
+    $row = $form->addRow();
+        $row->addLabel('subCategoryID', __('SubCategory'));
+        $row->addSelect('subCategoryID')->fromQueryChained($pdo, $sql1, $data1, 'categoryID')->placeholder()->isRequired();
+        
+                
     //TODO: select category, chainedTo subcategory
     
     $row = $form->addRow();
-        $row->addLabel('categoryName', __('Category Name'));
-        $row->addTextField('categoryName')
+        $row->addLabel('itemName', __('Item Name'));
+        $row->addTextField('itemName')
             ->maxLength(55)
             ->required(); 
     
