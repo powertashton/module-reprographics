@@ -36,10 +36,13 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
         $table->addHeaderAction('add', __('Add')) 
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_itemsManageAdd.php');
-        //TODO: USE GATEWAYS TO HAVE THIS BE NAMES NOT IDS
+        
         $table->addColumn('categoryName', __('Category'));
         $table->addColumn('subCategoryName', __('SubCategory'));
         $table->addColumn('itemName', __('Item Name'));
+        $table->addColumn('realPrice', __('Real Price'));
+        $table->addColumn('salePrice', __('Sale Price'));
+        $table->addColumn('stock', __('Stock'));
         $table->addActionColumn()
                 ->addParam('categoryID')
                 ->format(function ($department, $actions) use ($gibbon, $itemData) {

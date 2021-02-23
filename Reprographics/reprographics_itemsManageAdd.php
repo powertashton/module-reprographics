@@ -56,7 +56,17 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             ->required(); 
     
     //TODO: prices (real and sale) and quantity 
-    //$row->addNumber('hhh')->decimalPlaces(0)->maximum(99)->maxLength(2)->setValue('0');
+    $row = $form->addRow();
+        $row->addLabel('stock', __('Stock'));
+        $row->addNumber('stock')->decimalPlaces(0)->maximum(9999)->setValue('0');
+        
+    $row = $form->addRow();
+        $row->addLabel('realPrice', __('Real Price'));
+        $row->addNumber('realPrice')->decimalPlaces(0)->maximum(9999)->setValue('0');
+        
+    $row = $form->addRow();
+        $row->addLabel('salePrice', __('Sale Price'));
+        $row->addNumber('salePrice')->decimalPlaces(0)->maximum(9999)->setValue('0');
     
     $row = $form->addRow();
         $row->addFooter();

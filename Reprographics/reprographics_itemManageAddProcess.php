@@ -32,7 +32,10 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     // Proceed!
     $subCategoryID = $_POST['subCategoryID']; // The variables you will be processing
     $categoryID = $_POST['categoryID'];  
-    $itemName = $_POST['itemName'];   
+    $itemName = $_POST['itemName']; 
+    $stock = $_POST['stock']; 
+    $realPrice = $_POST['realPrice']; 
+    $salePrice = $_POST['salePrice'];   
     //TODO: THIS
     // Check that your required variables are present
     if (empty($itemName)) { 
@@ -41,7 +44,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         exit;
     } 
     try {
-        $data = ['subCategoryID' => $subCategoryID, 'categoryID' => $categoryID, 'itemName' => $itemName];
+        $data = ['subCategoryID' => $subCategoryID, 'categoryID' => $categoryID, 'itemName' => $itemName, 'stock'=> $stock, 'realPrice'=> $realPrice, 'salePrice'=> $salePrice];
         $itemGateway = $container->get(ItemGateway::class);
         $itemID = $itemGateway->insert($data);
             if ($itemID === false) {

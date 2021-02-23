@@ -23,7 +23,7 @@ class ItemGateway extends QueryableGateway //Replace NameGateway with the name o
         $select = $this
             ->newSelect()
             ->from('Item')
-            ->cols(['itemID','Item.subCategoryID', 'Item.categoryID', 'itemName', 'ItemCategory.categoryName AS categoryName', 'ItemSubCategory.subCategoryName AS subCategoryName'])
+            ->cols(['itemID', 'stock', 'realPrice', 'salePrice', 'Item.subCategoryID', 'Item.categoryID', 'itemName', 'ItemCategory.categoryName AS categoryName', 'ItemSubCategory.subCategoryName AS subCategoryName'])
             ->leftJoin('ItemCategory', 'Item.categoryID=ItemCategory.categoryID')
             ->leftJoin('ItemSubCategory', 'Item.subCategoryID=ItemSubCategory.subCategoryID')
             ->orderBy(['categoryName', 'subCategoryName']);
