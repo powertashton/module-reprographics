@@ -18,8 +18,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 
-
-
 use Gibbon\Forms\Form;
 use Gibbon\Module\Reprographics\Domain\ItemGateway;
 $page->breadcrumbs->add(__('Manage Stock'));
@@ -48,14 +46,25 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             ->placeholder('Please Select...')
             ->fromArray($options);
             
-    $row = $form->addRow();
+    $row = $form->addRow()->addClass("currentStock");
         $row->addLabel('currentStock', __('Current Stock'));
-        $row->addTextField('Stock')->readOnly();
+        $row->addTextField('currentStock')->readOnly();
         
     $row = $form->addRow();
         $row->addFooter();
         $row->addSubmit();
 
     echo $form->getOutput();
-
+?> 
+            <script type="text/javascript">
+			$(document).ready(function(){
+				$('.currentStock').hide();
+			});
+			
+			$(".dropdown").on("click", "div[class=\'leaf\']", function() {
+                $('.currentStock').show();
+                $('.currentStock input').val('aaa');
+            });
+			</script>
+<?php
 }	
