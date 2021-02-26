@@ -23,7 +23,7 @@ use Gibbon\Module\Reprographics\Domain\ItemGateway;
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
 
-$page->breadcrumbs->add(__('Add Item'));
+$page->breadcrumbs->add(__('Edit Item'));
 //TODO: REQUIRE CATEGORIES TO BE SET UP
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_itemsManage.php')) {
 	// Access denied
