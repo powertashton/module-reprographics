@@ -51,6 +51,11 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             ->fromArray($options);
     
     $row = $form->addRow();
+        $row->addLabel('quantity', __('Quantity'));
+        $row->addNumber('quantity')->spinner(true);
+    
+    
+    $row = $form->addRow();
         $row->addFooter();
         $row->addSubmit();
 
