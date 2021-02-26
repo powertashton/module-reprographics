@@ -52,6 +52,14 @@ $moduleTables[$tables++] = 'CREATE TABLE `Item` (
     `stock` int(12) NOT NULL,
     PRIMARY KEY (`itemID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+$moduleTables[$tables++] = 'CREATE TABLE `Order` (
+    `orderID` int(12) unsigned zerofill NOT NULL AUTO_INCREMENT,
+    `itemID` int(12) unsigned zerofill NOT NULL,
+    `orderStatus` varchar(55) NOT NULL,
+    `orderDate` date NOT NULL,
+    `quantity` int(12) NOT NULL,
+    PRIMARY KEY (`orderID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 //TODO: Department and Staff tables
 //TODO: productOut table
 
@@ -126,6 +134,26 @@ $actionRows[$actionCount++] = [
     'description'               => 'Allows the user to manage stock', // Text description
     'URLList'                   => 'reprographics_stock.php', // List of pages included in this action
     'entryURL'                  => 'reprographics_stock.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'N', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
+];
+
+$actionRows[$actionCount++] = [
+    'name'                      => 'Manage Orders', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Admin', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows the user to manage orders', // Text description
+    'URLList'                   => 'reprographics_orderManage.php', // List of pages included in this action
+    'entryURL'                  => 'reprographics_orderManage.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
     'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
     'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
