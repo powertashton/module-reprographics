@@ -21,7 +21,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 
 use Gibbon\Tables\DataTable;
-use Gibbon\Module\Reprographics\Domain\ItemGateway;
+use Gibbon\Module\Reprographics\Domain\OrderGateway;
 
 $page->breadcrumbs->add(__('Manage Stock'));
 //TODO: REQUIRE CATEGORIES TO BE SET UP
@@ -30,22 +30,23 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	$page->addError(__('You do not have access to this action.'));
 } else {
     //todo change this to order stuff lmao
-    $itemGateway = $container->get(ItemGateway::class);
-    $itemData = $itemGateway->selectItems()->toDataSet();
+    $orderGateway = $container->get(OrderGateway::class);
+    $orderData = $orderGateway->selectOrders()->toDataSet();
     $table = DataTable::create('items');
         $table->setTitle('Items');
 
         
-        $table->addColumn('categoryName', __('Category'));
-        $table->addColumn('subCategoryName', __('SubCategory'));
-        $table->addColumn('itemName', __('Item Name'));
-        $table->addColumn('stock', __('Stock'));
-        $table->addActionColumn()
-                ->addParam('itemID')
-                ->format(function ($department, $actions) use ($gibbon, $itemData) {
-                    $actions->addAction('add', __('Manage Stock'))
-                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_stockManage.php');
-                });
+        $table->addColumn('orderID', __('orderID'));
+        $table->addColumn('itemID', __('itemID'));
+        $table->addColumn('quantity', __('quantity'));
+        $table->addColumn('orderStatus', __('orderStatus'));
+        $table->addColumn('orderDate', __('orderDate'));
+       //  $table->addActionColumn()
+//                 ->addParam('itemID')
+//                 ->format(function ($department, $actions) use ($gibbon, $itemData) {
+//                     $actions->addAction('add', __('Manage Stock'))
+//                             ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_stockManage.php');
+//                 });
         
-        echo $table->render($itemData);
+        echo $table->render($orderData);
 }	

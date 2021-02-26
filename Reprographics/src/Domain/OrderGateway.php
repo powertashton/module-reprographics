@@ -19,5 +19,12 @@ class OrderGateway extends QueryableGateway //Replace NameGateway with the name 
     private static $primaryKey = 'orderID'; //The primaryKey of said table
     private static $searchableColumns = []; // Optional: Array of Columns to be searched when using the search filter
     
+    public function selectOrders() { 
+        $select = $this
+            ->newSelect()
+            ->from('Order')
+            ->cols(['orderID', 'itemID', 'quantity', 'orderStatus', 'orderDate']);
 
+        return $this->runSelect($select);
+    }
 }

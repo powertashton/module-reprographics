@@ -20,6 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 // Module includes
 include '../../gibbon.php';
 include './moduleFunctions.php';
+use Gibbon\Module\Reprographics\Domain\OrderGateway;
 
 $URL = $gibbon->session->get('absoluteURL') . '/index.php?q=/modules/' . $gibbon->session->get('module') . '/reprographics_order.php';
 
@@ -29,16 +30,28 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     header("Location: {$URL}");
 } else {
     // Proceed!
-    $test = $_POST['test']; // The variables you will be processing
+    $itemID = $_POST['itemID'];
+    $quantity = $_POST['quantity']; // The variables you will be processing
     //TODO: THIS
     // Check that your required variables are present
-    if (empty($test)) { 
+    if (empty($itemID)) { 
         $URL = $URL.'&return=error3';
         header("Location: {$URL}");
         exit;
     } 
-    
+    try {
+        $data = ['itemID' => $itemID, 'quantity' => $quantity, 'orderStatus' => 'Pending', 'orderDate' => date('Y-m-d')];
+        $orderGateway = $container->get(OrderGateway::class);
+        $orderID = $orderGateway->insert($data);
+            if ($orderID === false) {
+                throw new PDOException('Could not insert order.');
+            }
+     } catch (PDOException $e) {
+            $URL .= '&return=error2';
+            header("Location: {$URL}");
+            exit();
+    }
     // Your SQL or Gateway insert query
-    $URL .= "&return=success0&test=$test";
+    $URL .= "&return=success0&orderID=$orderID";
     header("Location: {$URL}");
 }

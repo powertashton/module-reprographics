@@ -45,14 +45,15 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     }, []);
     
     $row = $form->addRow();
-        $row->addLabel('test', __('Test'));
-        $row->addDropdown('test')
+        $row->addLabel('itemID', __('Item'));
+        $row->addDropdown('itemID')
             ->placeholder('Please Select...')
-            ->fromArray($options);
+            ->fromArray($options)
+            ->isRequired();
     
     $row = $form->addRow();
         $row->addLabel('quantity', __('Quantity'));
-        $row->addNumber('quantity')->spinner(true);
+        $row->addNumber('quantity')->spinner(true)->isRequired();
     
     
     $row = $form->addRow();
