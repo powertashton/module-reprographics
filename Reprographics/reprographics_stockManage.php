@@ -26,45 +26,39 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
+    
     $moduleName = $gibbon->session->get('module');
-    $form = Form::create('manageStock', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_orderProcess.php', 'post');
+   
+    $itemID = $_GET['itemID'] ?? '';
+    
+    if (empty($itemID)) {
+        $page->addError(__('No Item Selected.'));
+    }   
+   
+    $form = Form::create('manageStock', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_stockManageProcess.php', 'post');
     $form->addHiddenValue('address', $gibbon->session->get('address'));
+    $form->addHiddenValue('itemID', $itemID);
     
     $form->setClass('noIntBorder overflow-visible fullWidth standardForm');
     
     $itemGateway = $container->get(ItemGateway::class);
-    $itemData = $itemGateway->selectItems()->toDataSet()->toArray();
+    $values = $itemGateway->getByID($itemID);
 
-    $options = array_reduce($itemData, function ($group, $item) {
-      $group[$item['categoryName']][$item['subCategoryName']][$item['itemID']] = $item['itemName'];
-      return $group;
-    }, []);
     
     $row = $form->addRow();
-        $row->addLabel('test', __('Test'));
-        $row->addDropdown('test')
-            ->placeholder('Please Select...')
-            ->fromArray($options);
-            
-    $row = $form->addRow()->addClass("currentStock");
-        $row->addLabel('currentStock', __('Current Stock'));
-        $row->addTextField('currentStock')->readOnly();
-        
+        $row->addLabel('itemName', __('Item Name'));
+        $row->addTextField('itemName')->readOnly();
+    
+    $row = $form->addRow()->addClass("stock");
+        $row->addLabel('stock', __('Stock'));
+        $row->addNumber('stock')->spinner(true);
+    
+    $form->loadAllValuesFrom($values);
+    
     $row = $form->addRow();
         $row->addFooter();
         $row->addSubmit();
 
     echo $form->getOutput();
-?> 
-            <script type="text/javascript">
-			$(document).ready(function(){
-				$('.currentStock').hide();
-			});
-			
-			$(".dropdown").on("click", "div[class=\'leaf\']", function() {
-                $('.currentStock').show();
-                $('.currentStock input').val( $(".dropdown div[id=\'header\']").text() );
-            });
-			</script>
-<?php
-}	
+
+}

@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 use Gibbon\Forms\Form;
 use Gibbon\Forms\DatabaseFormFactory;
-
+use Gibbon\Module\Reprographics\Domain\ItemGateway;
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
 
@@ -32,14 +32,18 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     //FORM TO CREATE A CATEGORY
     $moduleName = $gibbon->session->get('module');
     
+    $itemID = $_GET['itemID'] ?? '';
     
-    $form = Form::create('addCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_itemManageAddProcess.php', 'post');
+    $form = Form::create('addCategory', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_itemManageEditProcess.php', 'post');
     $form->setFactory(DatabaseFormFactory::create($pdo));
     $form->addHiddenValue('address', $gibbon->session->get('address'));
-    
+    $form->addHiddenValue('itemID', $itemID);
     $data = array();
     $sql = "SELECT categoryID as value, categoryName as name FROM ItemCategory";
-                    
+           
+    $itemGateway = $container->get(ItemGateway::class);
+    $values = $itemGateway->getByID($itemID);
+             
     $row = $form->addRow();
         $row->addLabel('categoryID', __('Category'));
         $row->addSelect('categoryID')->fromQuery($pdo, $sql, $data)->placeholder()->isRequired();                
@@ -56,12 +60,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $row->addTextField('itemName')
             ->maxLength(55)
             ->required(); 
-    
-    //TODO: prices (real and sale) and quantity 
-    $row = $form->addRow();
-        $row->addLabel('stock', __('Stock'));
-        $row->addNumber('stock')->decimalPlaces(0)->maximum(9999)->setValue('0');
-        
+
     $row = $form->addRow();
         $row->addLabel('realPrice', __('Real Price'));
         $row->addNumber('realPrice')->decimalPlaces(0)->maximum(9999)->setValue('0');
@@ -69,6 +68,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $row = $form->addRow();
         $row->addLabel('salePrice', __('Sale Price'));
         $row->addNumber('salePrice')->decimalPlaces(0)->maximum(9999)->setValue('0');
+    
+    $form->loadAllValuesFrom($values);
     
     $row = $form->addRow();
         $row->addFooter();

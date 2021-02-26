@@ -1,3 +1,4 @@
+	
 <?php
 /*
 Gibbon, Flexible & Open School System
@@ -22,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 use Gibbon\Tables\DataTable;
 use Gibbon\Module\Reprographics\Domain\ItemGateway;
 
-$page->breadcrumbs->add(__('View Items'));
+$page->breadcrumbs->add(__('Manage Stock'));
 //TODO: REQUIRE CATEGORIES TO BE SET UP
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManage.php')) {
 	// Access denied
@@ -34,22 +35,16 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $table = DataTable::create('items');
         $table->setTitle('Items');
 
-        $table->addHeaderAction('add', __('Add')) 
-                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_itemsManageAdd.php');
         
         $table->addColumn('categoryName', __('Category'));
         $table->addColumn('subCategoryName', __('SubCategory'));
         $table->addColumn('itemName', __('Item Name'));
-        $table->addColumn('realPrice', __('Real Price'));
-        $table->addColumn('salePrice', __('Sale Price'));
+        $table->addColumn('stock', __('Stock'));
         $table->addActionColumn()
                 ->addParam('itemID')
                 ->format(function ($department, $actions) use ($gibbon, $itemData) {
-                    $actions->addAction('edit', __('Edit'))
-                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_itemsManageEdit.php');
-                    $actions->addAction('delete', __('Delete'))
-                            ->modalWindow()
-                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_itemsManageDelete.php');
+                    $actions->addAction('add', __('Manage Stock'))
+                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_stockManage.php');
                 });
         
         echo $table->render($itemData);
