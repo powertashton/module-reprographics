@@ -34,8 +34,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $job = $_GET['job'];
     $quantity = $_GET['quantity'];
     $itemID = $_GET['itemID'];
-     // The variables you will be processing
-    //TODO: THIS
+    // The variables you will be processing
+    // TODO: THIS
     // Check that your required variables are present
     if (empty($orderID)) { 
         $URL = $URL.'&return=error3';

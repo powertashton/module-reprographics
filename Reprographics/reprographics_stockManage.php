@@ -22,7 +22,7 @@ use Gibbon\Forms\Form;
 use Gibbon\Module\Reprographics\Domain\ItemGateway;
 $page->breadcrumbs->add(__('Manage Stock'));
 
-if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_stockManage.php')) {
+if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_stock.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
