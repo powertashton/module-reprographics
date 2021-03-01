@@ -22,7 +22,7 @@ use Gibbon\Tables\DataTable;
 use Gibbon\Module\Reprographics\Domain\OrderGateway;
 
 $page->breadcrumbs->add(__('Manage Orders'));
-//TODO: REQUIRE CATEGORIES TO BE SET UP
+
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_orderManage.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
