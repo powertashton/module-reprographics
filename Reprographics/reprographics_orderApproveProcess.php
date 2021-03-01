@@ -22,32 +22,39 @@ include '../../gibbon.php';
 include './moduleFunctions.php';
 use Gibbon\Module\Reprographics\Domain\OrderGateway;
 
-$URL = $gibbon->session->get('absoluteURL') . '/index.php?q=/modules/' . $gibbon->session->get('module') . '/reprographics_order.php';
+$URL = $gibbon->session->get('absoluteURL') . '/index.php?q=/modules/' . $gibbon->session->get('module') . '/reprographics_orderManage.php';
 
-if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_order.php')) {
+if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_orderManage.php')) {
     // Access denied
     $URL = $URL.'&return=error0';
     header("Location: {$URL}");
 } else {
     // Proceed!
-    $itemID = $_POST['itemID'];
-    $quantity = $_POST['quantity'];
-    $gibbonPersonID = $gibbon->session->get('gibbonPersonID');
+    $orderID = $_GET['orderID'];
+    $job = $_GET['job'];
+    $quantity = $_GET['quantity'];
+    $itemID = $_GET['itemID'];
      // The variables you will be processing
     //TODO: THIS
     // Check that your required variables are present
-    if (empty($itemID)) { 
+    if (empty($orderID)) { 
         $URL = $URL.'&return=error3';
         header("Location: {$URL}");
         exit;
     } 
     try {
-        $data = ['itemID' => $itemID, 'gibbonPersonID' => $gibbonPersonID, 'quantity' => $quantity, 'orderStatus' => 'Pending', 'orderDate' => date('Y-m-d')];
+        $data = ['orderStatus' => $job];
         $orderGateway = $container->get(OrderGateway::class);
-        $orderID = $orderGateway->insert($data);
+        $orderID = $orderGateway->update($orderID, $data);
             if ($orderID === false) {
                 throw new PDOException('Could not insert order.');
             }
+        if ($job == 'Approved') {
+            $data = array('quantity' => $quantity, 'itemID' => $itemID);
+            $sql = 'UPDATE Item SET stock=(stock - :quantity) WHERE itemID = :itemID';
+            $result = $connection2->prepare($sql);
+            $result->execute($data);
+        }
      } catch (PDOException $e) {
             $URL .= '&return=error2';
             header("Location: {$URL}");

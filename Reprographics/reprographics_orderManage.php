@@ -23,30 +23,46 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 use Gibbon\Tables\DataTable;
 use Gibbon\Module\Reprographics\Domain\OrderGateway;
 
-$page->breadcrumbs->add(__('Manage Stock'));
+$page->breadcrumbs->add(__('Manage Orders'));
 //TODO: REQUIRE CATEGORIES TO BE SET UP
-if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_categoryManage.php')) {
+if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_orderManage.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    //todo change this to order stuff lmao
     $orderGateway = $container->get(OrderGateway::class);
-    $orderData = $orderGateway->selectOrders()->toDataSet();
-    $table = DataTable::create('items');
-        $table->setTitle('Items');
+    
+    $criteria = $orderGateway->newQueryCriteria(true)
+        ->sortBy('orderStatus', 'ASC')
+        ->sortBy('orderID', 'DESC')
+        ->fromPOST();
+    $orders = $orderGateway->queryOrders($criteria);
 
+    $table = DataTable::create('orders');
+        $table->setTitle('Orders');
         
         $table->addColumn('orderID', __('orderID'));
+        $table->addColumn('gibbonPersonID', __('gibbonPersonID'));
         $table->addColumn('itemID', __('itemID'));
         $table->addColumn('quantity', __('quantity'));
         $table->addColumn('orderStatus', __('orderStatus'));
         $table->addColumn('orderDate', __('orderDate'));
-       //  $table->addActionColumn()
-//                 ->addParam('itemID')
-//                 ->format(function ($department, $actions) use ($gibbon, $itemData) {
-//                     $actions->addAction('add', __('Manage Stock'))
-//                             ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_stockManage.php');
-//                 });
         
-        echo $table->render($orderData);
+        $table->addActionColumn()
+            ->addParam('orderID')
+            ->addParam('itemID')
+            ->addParam('quantity')
+            ->format(function ($row, $actions) use ($gibbon) {
+                if ($row['orderStatus'] == 'Pending') {
+                $actions->addAction('approve', __('Approve'))
+                        ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_orderApproveProcess.php')
+                        ->addParam('job', 'Approved')
+                        ->setIcon('iconTick');
+                 $actions->addAction('reject', __('Reject'))
+                        ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_orderApproveProcess.php')
+                        ->addParam('job', 'Rejected')
+                        ->setIcon('iconCross');
+                }
+            });
+        //TODO: add actions to approve/reject orders
+    echo $table->render($orders);
 }	

@@ -33,6 +33,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 } else {
     //TODO: Select items from category...
     $moduleName = $gibbon->session->get('module');
+    $gibbonPersonID = $gibbon->session->get('gibbonPersonID');
     $form = Form::create('orderItems', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_orderProcess.php', 'post');
     $form->addHiddenValue('address', $gibbon->session->get('address'));
     
@@ -65,15 +66,22 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     echo $form->getOutput();
     //SELECT BY USER
     $orderGateway = $container->get(OrderGateway::class);
-    $orderData = $orderGateway->selectOrders()->toDataSet();
-    $table = DataTable::create('items');
-        $table->setTitle('Items');
+    
+    $criteria = $orderGateway->newQueryCriteria(true)
+        ->sortBy('orderStatus', 'ASC')
+        ->sortBy('orderID', 'DESC')
+        ->fromPOST();
+    $orders = $orderGateway->queryOrders($criteria, $gibbonPersonID);
+
+    $table = DataTable::create('orders');
+        $table->setTitle('Your Orders');
 
         
         $table->addColumn('orderID', __('orderID'));
+        $table->addColumn('gibbonPersonID', __('gibbonPersonID'));
         $table->addColumn('itemID', __('itemID'));
         $table->addColumn('quantity', __('quantity'));
         $table->addColumn('orderStatus', __('orderStatus'));
         $table->addColumn('orderDate', __('orderDate'));
-    echo $table->render($orderData);
+    echo $table->render($orders);
 }	
