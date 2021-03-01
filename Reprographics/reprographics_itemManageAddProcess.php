@@ -56,7 +56,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             exit();
     }
         
-    // Your SQL or Gateway insert query
+
     $URL .= "&return=success0&categoryID=$categoryID&subCategoryID=$subCategoryID";
     header("Location: {$URL}");
 }

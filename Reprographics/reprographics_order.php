@@ -31,7 +31,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    //TODO: Select items from category...
+
     $moduleName = $gibbon->session->get('module');
     $gibbonPersonID = $gibbon->session->get('gibbonPersonID');
     $form = Form::create('orderItems', $gibbon->session->get('absoluteURL') . '/modules/' . $moduleName . '/reprographics_orderProcess.php', 'post');
@@ -56,7 +56,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     
     $row = $form->addRow();
         $row->addLabel('quantity', __('Quantity'));
-        $row->addNumber('quantity')->spinner(true)->isRequired();
+        $row->addNumber('quantity')->setValue(1)->spinner(true)->isRequired();
     
     
     $row = $form->addRow();

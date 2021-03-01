@@ -32,28 +32,29 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     
     if (empty($categoryID)) {
         $page->addError(__('No category Selected.'));
-    }
-    //TODO: TITLE OF THE CATEGORY 
-    $subCategoryGateway = $container->get(SubCategoryGateway::class);
-    $subCategoryData = $subCategoryGateway->selectSubCategories($categoryID)->toDataSet(); 
-        $table = DataTable::create('subcategories');
-        $table->setTitle('SubCategories');
+    } else { 
+        //TODO: TITLE OF THE CATEGORY 
+        $subCategoryGateway = $container->get(SubCategoryGateway::class);
+        $subCategoryData = $subCategoryGateway->selectSubCategories($categoryID)->toDataSet(); 
+            $table = DataTable::create('subcategories');
+            $table->setTitle('SubCategories');
 
-        $table->addHeaderAction('add', __('Add'))
-                ->addParam('categoryID', $_GET['categoryID'])
-                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageAdd.php');
+            $table->addHeaderAction('add', __('Add'))
+                    ->addParam('categoryID', $_GET['categoryID'])
+                    ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageAdd.php');
 
-        $table->addColumn('subCategoryName', __('Subategory Name'));
-        $table->addActionColumn()
-                ->addParam('categoryID')
-                ->addParam('subCategoryID')
-                ->format(function ($department, $actions) use ($gibbon, $subCategoryData) {
-                    $actions->addAction('edit', __('Edit'))
-                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageEdit.php');
-                    $actions->addAction('delete', __('Delete'))
-                            ->modalWindow()
-                            ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageDelete.php');
-                });
+            $table->addColumn('subCategoryName', __('Subategory Name'));
+            $table->addActionColumn()
+                    ->addParam('categoryID')
+                    ->addParam('subCategoryID')
+                    ->format(function ($department, $actions) use ($gibbon, $subCategoryData) {
+                        $actions->addAction('edit', __('Edit'))
+                                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageEdit.php');
+                        $actions->addAction('delete', __('Delete'))
+                                ->modalWindow()
+                                ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_subCategoryManageDelete.php');
+                    });
         
-        echo $table->render($subCategoryData);
+            echo $table->render($subCategoryData);
+    }
 }	

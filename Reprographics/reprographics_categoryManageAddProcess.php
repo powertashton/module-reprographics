@@ -31,8 +31,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 } else {
     // Proceed!
     $categoryName = $_POST['categoryName']; // The variables you will be processing
-    //TODO: THIS
-    // Check that your required variables are present
+
     if (empty($categoryName)) { 
         $URL = $URL.'&return=error3';
         header("Location: {$URL}");
