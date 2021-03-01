@@ -104,6 +104,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
         
             $table->addColumn('orderID', __('orderID'));
+            $table->addColumn('deptID', __('deptID'));
             $table->addColumn('gibbonPersonID', __('gibbonPersonID'));
             $table->addColumn('itemID', __('itemID'));
             $table->addColumn('quantity', __('quantity'));

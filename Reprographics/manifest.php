@@ -55,6 +55,7 @@ $moduleTables[$tables++] = 'CREATE TABLE `Item` (
 $moduleTables[$tables++] = 'CREATE TABLE `Order` (
     `orderID` int(12) unsigned zerofill NOT NULL AUTO_INCREMENT,
     `itemID` int(12) unsigned zerofill NOT NULL,
+    `deptID` int(12) unsigned zerofill NOT NULL,
     `gibbonPersonID` int(10) unsigned zerofill NOT NULL,
     `orderStatus` varchar(55) NOT NULL,
     `orderDate` date NOT NULL,

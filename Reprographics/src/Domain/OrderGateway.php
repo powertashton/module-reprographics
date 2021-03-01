@@ -23,7 +23,7 @@ class OrderGateway extends QueryableGateway //Replace NameGateway with the name 
         $select = $this
             ->newSelect()
             ->from('Order')
-            ->cols(['orderID', 'itemID', 'gibbonPersonID','quantity', 'orderStatus', 'orderDate']);
+            ->cols(['orderID', 'itemID', 'deptID', 'gibbonPersonID','quantity', 'orderStatus', 'orderDate']);
 
         return $this->runSelect($select);
     }
@@ -32,7 +32,7 @@ class OrderGateway extends QueryableGateway //Replace NameGateway with the name 
         $query = $this
             ->newQuery()
             ->from('Order')
-            ->cols(['orderID', 'itemID', 'gibbonPersonID','quantity', 'orderStatus', 'orderDate']);
+            ->cols(['orderID', 'itemID', 'deptID', 'gibbonPersonID','quantity', 'orderStatus', 'orderDate']);
         
         if (!empty($gibbonPersonID)) {
             $query->where('Order.gibbonPersonID = :gibbonPersonID')

@@ -32,6 +32,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     // Proceed!
     $itemID = $_POST['itemID'];
     $quantity = $_POST['quantity'];
+    $deptID = $_POST['deptID'];
     $gibbonPersonID = $gibbon->session->get('gibbonPersonID');
      // The variables you will be processing
     //TODO: THIS
@@ -42,7 +43,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         exit;
     } 
     try {
-        $data = ['itemID' => $itemID, 'gibbonPersonID' => $gibbonPersonID, 'quantity' => $quantity, 'orderStatus' => 'Pending', 'orderDate' => date('Y-m-d')];
+        $data = ['itemID' => $itemID,'deptID' => $deptID, 'gibbonPersonID' => $gibbonPersonID, 'quantity' => $quantity, 'orderStatus' => 'Pending', 'orderDate' => date('Y-m-d')];
         $orderGateway = $container->get(OrderGateway::class);
         $orderID = $orderGateway->insert($data);
             if ($orderID === false) {
