@@ -77,7 +77,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         ->sortBy('orderStatus', 'ASC')
         ->sortBy('orderID', 'DESC')
         ->filterBy('startDate', $startDate)
-        ->filterBy('endDate', date('Y-m-d 23:59:59', strtotime($endDate)));
+        ->filterBy('endDate', date('Y-m-d 23:59:59', strtotime($endDate)))
+        ->fromPost();
 
     
    
