@@ -40,7 +40,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $endDate = isset($_GET['endDate']) ? Format::dateConvert($_GET['endDate']) : date('Y-m-d');
 
     //Filter
-    $form = Form::create('helpDeskStatistics', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
+    $form = Form::create('reports', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
     $form->addHiddenValue('q', '/modules/' . $gibbon->session->get('module') . '/reprographics_reports.php');
     $form->setTitle('Filter');
 
