@@ -23,7 +23,8 @@ use Gibbon\Domain\User\UserGateway;
 use Gibbon\Module\Reprographics\Domain\OrderGateway;
 use Gibbon\Module\Reprographics\Domain\DepartmentGateway;
 use Gibbon\Module\Reprographics\Domain\ItemGateway;
-
+use Gibbon\Module\Reprographics\Domain\SubCategoryGateway;
+use Gibbon\Module\Reprographics\Domain\CategoryGateway;
 $page->breadcrumbs->add(__('Manage Orders'));
 
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_orderManage.php')) {
@@ -34,7 +35,9 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $deptGateway = $container->get(DepartmentGateway::class);
     $userGateway = $container->get(UserGateway::class);
     $itemGateway = $container->get(ItemGateway::class);
-    
+    $userGateway = $container->get(UserGateway::class);
+    $subCategoryGateway = $container->get(SubCategoryGateway::class);
+    $categoryGateway = $container->get(CategoryGateway::class);
     
     $criteria = $orderGateway->newQueryCriteria(true)
         ->sortBy('orderStatus', 'ASC')
@@ -62,9 +65,11 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 });
                 
             $table->addColumn('itemID', __('Item'))
-            ->format(function ($row) use ($itemGateway) {
+            ->format(function ($row) use ($itemGateway, $subCategoryGateway, $categoryGateway) {
                 $item = $itemGateway->getByID($row['itemID']);
-                $output = $item['itemName'];
+                $category = $categoryGateway->getByID($item['categoryID']);
+                $subCategory = $subCategoryGateway->getByID($item['subCategoryID']);
+                $output = $category['categoryName'] . ' - ' . $subCategory['subCategoryName'] . ' - ' . $item['itemName'];
 
                 return $output;
             });
