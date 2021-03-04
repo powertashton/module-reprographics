@@ -44,6 +44,16 @@ class OrderGateway extends QueryableGateway //Replace NameGateway with the name 
                     ->where('Order.deptID = :deptID')
                     ->bindValue('deptID', $deptID);
             },
+             'startDate' => function ($query, $startDate) {
+                return $query
+                    ->where('orderDate >= :startDate')
+                    ->bindValue('startDate', $startDate);
+            },
+            'endDate' => function ($query, $endDate) {
+                return $query
+                    ->where('orderDate <= :endDate')
+                    ->bindValue('endDate', $endDate);
+            },
         ]);
         return $this->runQuery($query, $criteria);
     }

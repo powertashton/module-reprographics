@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 use Gibbon\Services\Format;
+use Gibbon\Forms\Form;
 use Gibbon\Tables\Prefab\ReportTable;
 use Gibbon\Domain\User\UserGateway;
 use Gibbon\Module\Reprographics\Domain\OrderGateway;
@@ -31,6 +32,38 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
+    //Proceed!
+    //Default Data
+    $d = new DateTime('first day of this month');
+    $startDate = isset($_GET['startDate']) ? Format::dateConvert($_GET['startDate']) : $d->format('Y-m-d');
+    $endDate = isset($_GET['endDate']) ? Format::dateConvert($_GET['endDate']) : date('Y-m-d');
+
+    //Filter
+    $form = Form::create('helpDeskStatistics', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
+    $form->addHiddenValue('q', '/modules/' . $gibbon->session->get('module') . '/reprographics_reports.php');
+    $form->setTitle('Filter');
+
+    $row = $form->addRow();
+        $row->addLabel('startDate', __('Start Date Filter'));
+        $row->addDate('startDate')
+            ->setDateFromValue($startDate)
+            ->chainedTo('endDate')
+            ->required();
+
+    $row = $form->addRow();
+        $row->addLabel('endDate', __('End Date Filter'));
+        $row->addDate('endDate')
+            ->setDateFromValue($endDate)
+            ->chainedFrom('startDate')
+            ->required();
+
+    $row = $form->addRow();
+        $row->addFooter();
+        $row->addSubmit();
+
+    echo $form->getOutput();
+
+
     $orderGateway = $container->get(OrderGateway::class);
     $deptGateway = $container->get(DepartmentGateway::class);
     $userGateway = $container->get(UserGateway::class);
@@ -42,7 +75,9 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $criteria = $orderGateway->newQueryCriteria(true)
         ->sortBy('orderStatus', 'ASC')
         ->sortBy('orderID', 'DESC')
-        ->fromPOST();
+        ->filterBy('startDate', $startDate)
+        ->filterBy('endDate', date('Y-m-d 23:59:59', strtotime($endDate)));
+
     
    
     $orders = $orderGateway->queryOrders($criteria);
