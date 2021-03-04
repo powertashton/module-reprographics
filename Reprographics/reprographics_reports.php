@@ -26,13 +26,14 @@ use Gibbon\Module\Reprographics\Domain\DepartmentGateway;
 use Gibbon\Module\Reprographics\Domain\ItemGateway;
 use Gibbon\Module\Reprographics\Domain\SubCategoryGateway;
 use Gibbon\Module\Reprographics\Domain\CategoryGateway;
-$page->breadcrumbs->add(__('Manage Orders'));
+
 
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_orderManage.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
     //Proceed!
+    $page->breadcrumbs->add(__('Records'));
     //Default Data
     $d = new DateTime('first day of this month');
     $startDate = isset($_GET['startDate']) ? Format::dateConvert($_GET['startDate']) : $d->format('Y-m-d');
