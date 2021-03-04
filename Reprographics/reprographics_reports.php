@@ -1,3 +1,4 @@
+	
 <?php
 /*
 Gibbon, Flexible & Open School System
@@ -16,22 +17,61 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-
+use Gibbon\Services\Format;
+use Gibbon\Tables\Prefab\ReportTable;
+use Gibbon\Domain\User\UserGateway;
+use Gibbon\Module\Reprographics\Domain\OrderGateway;
+use Gibbon\Module\Reprographics\Domain\DepartmentGateway;
 use Gibbon\Module\Reprographics\Domain\ItemGateway;
-use Gibbon\Tables\DataTable;
 
-$page->breadcrumbs->add(__('Reports'));
+$page->breadcrumbs->add(__('Manage Orders'));
 
-if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_order.php')) {
+if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_orderManage.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
+    $orderGateway = $container->get(OrderGateway::class);
+    $deptGateway = $container->get(DepartmentGateway::class);
+    $userGateway = $container->get(UserGateway::class);
     $itemGateway = $container->get(ItemGateway::class);
-    $itemData = $itemGateway->selectItems()->toDataSet()->toArray();
-    foreach ($itemData as $item) {
-        $table = DataTable::create($item['itemID']);
-            $table->setTitle($item['itemName']);
-             
-    }
-    echo $table->render($itemData);
+    
+    
+    $criteria = $orderGateway->newQueryCriteria(true)
+        ->sortBy('orderStatus', 'ASC')
+        ->sortBy('orderID', 'DESC')
+        ->fromPOST();
+    $orders = $orderGateway->queryOrders($criteria);
+    $viewMode = isset($_REQUEST['format']) ? $_REQUEST['format'] : '';
+    $table = ReportTable::createPaginated('orders', $criteria)->setViewMode($viewMode, $gibbon->session);;
+        $table->setTitle('Orders');
+        
+        $table->addColumn('orderID', __('orderID'));
+        $table->addColumn('deptID', __('Department'))
+            ->format(function ($row) use ($deptGateway) {
+                $dept = $deptGateway->getByID($row['deptID']);
+                $output = $dept['deptName'];
+
+                return $output;
+            });
+        
+            $table->addColumn('gibbonPersonID', __('Owner'))
+                ->format(function ($row) use ($userGateway) {
+                    $owner = $userGateway->getByID($row['gibbonPersonID']);
+                    $output = Format::name($owner['title'], $owner['preferredName'], $owner['surname'], 'Staff');
+                    return $output;
+                });
+                
+            $table->addColumn('itemID', __('Item'))
+            ->format(function ($row) use ($itemGateway) {
+                $item = $itemGateway->getByID($row['itemID']);
+                $output = $item['itemName'];
+
+                return $output;
+            });
+        $table->addColumn('quantity', __('quantity'));
+        $table->addColumn('orderStatus', __('orderStatus'));
+        $table->addColumn('orderDate', __('orderDate'));
+        
+       
+    echo $table->render($orders);
 }	
