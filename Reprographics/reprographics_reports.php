@@ -19,7 +19,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 use Gibbon\Services\Format;
 use Gibbon\Forms\Form;
-use Gibbon\Tables\Prefab\ReportTable;
+use Gibbon\Tables\DataTable;
 use Gibbon\Domain\User\UserGateway;
 use Gibbon\Module\Reprographics\Domain\OrderGateway;
 use Gibbon\Module\Reprographics\Domain\DepartmentGateway;
@@ -28,99 +28,53 @@ use Gibbon\Module\Reprographics\Domain\SubCategoryGateway;
 use Gibbon\Module\Reprographics\Domain\CategoryGateway;
 
 
-if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_orderManage.php')) {
+if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_reports.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
-    //Proceed!
     $page->breadcrumbs->add(__('Records'));
-    //Default Data
-    $d = new DateTime('first day of this month');
-    $startDate = isset($_GET['startDate']) ? Format::dateConvert($_GET['startDate']) : $d->format('Y-m-d');
-    $endDate = isset($_GET['endDate']) ? Format::dateConvert($_GET['endDate']) : date('Y-m-d');
-
-    //Filter
-    $form = Form::create('reports', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
-    $form->addHiddenValue('q', '/modules/' . $gibbon->session->get('module') . '/reprographics_reports.php');
-    $form->setTitle('Filter');
-
-    $row = $form->addRow();
-        $row->addLabel('startDate', __('Start Date Filter'));
-        $row->addDate('startDate')
-            ->setDateFromValue($startDate)
-            ->chainedTo('endDate')
-            ->required();
-
-    $row = $form->addRow();
-        $row->addLabel('endDate', __('End Date Filter'));
-        $row->addDate('endDate')
-            ->setDateFromValue($endDate)
-            ->chainedFrom('startDate')
-            ->required();
-
-    $row = $form->addRow();
-        $row->addFooter();
-        $row->addSubmit();
-
-    echo $form->getOutput();
-
-
-    $orderGateway = $container->get(OrderGateway::class);
-    $deptGateway = $container->get(DepartmentGateway::class);
-    $userGateway = $container->get(UserGateway::class);
-    $itemGateway = $container->get(ItemGateway::class);
-    $userGateway = $container->get(UserGateway::class);
-    $subCategoryGateway = $container->get(SubCategoryGateway::class);
-    $categoryGateway = $container->get(CategoryGateway::class);
     
-    $criteria = $orderGateway->newQueryCriteria(true)
-        ->sortBy('orderStatus', 'ASC')
-        ->sortBy('orderID', 'DESC')
-        ->filterBy('startDate', $startDate)
-        ->filterBy('endDate', date('Y-m-d 23:59:59', strtotime($endDate)))
-        ->fromPost();
-
-    
-   
-    $orders = $orderGateway->queryOrders($criteria);
-    $viewMode = isset($_REQUEST['format']) ? $_REQUEST['format'] : '';
-    $table = ReportTable::createPaginated('orders', $criteria)->setViewMode($viewMode, $gibbon->session);
-     $departments = $deptGateway->selectDepts()->toDataSet()->toArray();
-    foreach ($departments as $department) {
-        $table->addMetaData('filterOptions', [
-            'deptID:' . $department['deptID'] => __('Department') . ': ' . $department['deptName'],
-        ]);
-    }    
-        $table->setTitle('Orders');
+        //Default Data
+        $d = new DateTime('first day of this month');
+        $startDate = isset($_GET['startDate']) ? Format::dateConvert($_GET['startDate']) : $d->format('Y-m-d');
+        $endDate = isset($_GET['endDate']) ? Format::dateConvert($_GET['endDate']) : date('Y-m-d');
+        $dept = isset($_GET['dept']) ?? '';
         
-        $table->addColumn('deptID', __('Department'))
-            ->format(function ($row) use ($deptGateway) {
-                $dept = $deptGateway->getByID($row['deptID']);
-                $output = $dept['deptName'];
+        //Filter
+        $form = Form::create('reports', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
+        $form->addHiddenValue('q', '/modules/' . $gibbon->session->get('module') . '/reprographics_reports.php');
+        $form->setTitle('Generate Report');
 
-                return $output;
-            });
+        $row = $form->addRow();
+            $row->addLabel('startDate', __('Start Date Filter'));
+            $row->addDate('startDate')
+                ->setDateFromValue($startDate)
+                ->chainedTo('endDate')
+                ->required();
+
+        $row = $form->addRow();
+            $row->addLabel('endDate', __('End Date Filter'));
+            $row->addDate('endDate')
+                ->setDateFromValue($endDate)
+                ->chainedFrom('startDate')
+                ->required();
+        $deptGateway = $container->get(DepartmentGateway::class);
+        $departments = $deptGateway->selectDepts()->fetchAll(); 
         
-            $table->addColumn('gibbonPersonID', __('Owner'))
-                ->format(function ($row) use ($userGateway) {
-                    $owner = $userGateway->getByID($row['gibbonPersonID']);
-                    $output = Format::name($owner['title'], $owner['preferredName'], $owner['surname'], 'Staff');
-                    return $output;
-                });
+        $departmentOptions = array_reduce($departments, function ($group, $item) {
+              $group[$item['deptID']] = $item['deptName'];
+              return $group;
+            }, []);
+        
+        $row = $form->addRow();
+            $row->addLabel('deptID', __('Department'))->description(__('Leave blank for all'));
+            $row->addSelect('deptID')
+                ->placeholder('Please Select...')
+                ->fromArray($departmentOptions);      
                 
-            $table->addColumn('itemID', __('Item'))
-            ->format(function ($row) use ($itemGateway, $subCategoryGateway, $categoryGateway) {
-                $item = $itemGateway->getByID($row['itemID']);
-                $category = $categoryGateway->getByID($item['categoryID']);
-                $subCategory = $subCategoryGateway->getByID($item['subCategoryID']);
-                $output = $category['categoryName'] . ' - ' . $subCategory['subCategoryName'] . ' - ' . $item['itemName'];
+        $row = $form->addRow();
+            $row->addFooter();
+            $row->addSubmit();
 
-                return $output;
-            });
-        $table->addColumn('quantity', __('quantity'));
-        $table->addColumn('orderStatus', __('orderStatus'));
-        $table->addColumn('orderDate', __('orderDate'));
-        
-       
-    echo $table->render($orders);
-}	
+        echo $form->getOutput();
+}
