@@ -38,7 +38,25 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $d = new DateTime('first day of this month');
         $startDate = isset($_GET['startDate']) ? Format::dateConvert($_GET['startDate']) : $d->format('Y-m-d');
         $endDate = isset($_GET['endDate']) ? Format::dateConvert($_GET['endDate']) : date('Y-m-d');
-        $dept = isset($_GET['dept']) ?? '';
+        $deptID = isset($_GET['deptID']) ?? '';
+        
+        $deptGateway = $container->get(DepartmentGateway::class);
+        $departments = $deptGateway->selectDepts()->fetchAll(); 
+        $orderGateway = $container->get(OrderGateway::class);
+        $userGateway = $container->get(UserGateway::class);
+        $itemGateway = $container->get(ItemGateway::class);
+        $userGateway = $container->get(UserGateway::class);
+        $subCategoryGateway = $container->get(SubCategoryGateway::class);
+        $categoryGateway = $container->get(CategoryGateway::class);
+    
+        $criteria = $orderGateway->newQueryCriteria(true)
+            ->sortBy('orderStatus', 'ASC')
+            ->sortBy('orderID', 'DESC')
+            ->filterBy('startDate', $startDate)
+            ->filterBy('endDate', date('Y-m-d 23:59:59', strtotime($endDate)))
+            ->filterBy('deptID', $deptID)
+            ->fromPost();
+
         
         //Filter
         $form = Form::create('reports', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
@@ -58,9 +76,9 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 ->setDateFromValue($endDate)
                 ->chainedFrom('startDate')
                 ->required();
-        $deptGateway = $container->get(DepartmentGateway::class);
-        $departments = $deptGateway->selectDepts()->fetchAll(); 
-        
+            
+   
+    
         $departmentOptions = array_reduce($departments, function ($group, $item) {
               $group[$item['deptID']] = $item['deptName'];
               return $group;
@@ -77,4 +95,36 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             $row->addSubmit();
 
         echo $form->getOutput();
+        
+        
+        $categories = $categoryGateway->selectCategories()->toDataSet();
+        foreach ($categories as $category) {
+            
+            $table = DataTable::createDetails($category['categoryID']);
+            
+
+            $table->setTitle($category['categoryName']);
+            $table->addMetaData('gridClass', 'grid-cols-10');
+            
+            $subCategories = $subCategoryGateway->selectSubCategories($category['categoryID'])->toDataSet();
+            foreach ($subCategories as $subCategory){
+            
+                $table->addColumn('subcat'.$subCategory['subCategoryID'], __($subCategory['subCategoryName']))->addClass('col-span-10');
+                
+                $items = $itemGateway->selectBy(['subCategoryID' => $subCategory['subCategoryID']])->fetchAll();
+                
+                foreach ($items as $item){
+                    $table->addColumn('item'.$item['itemID'], __($item['itemName']));
+                    
+                    
+                }
+            }
+            
+            echo $table->render([$category]);
+        }
+        
+        
+        $orders = $orderGateway->queryOrders($criteria)->toArray();
+        
+        
 }
