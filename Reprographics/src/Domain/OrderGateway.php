@@ -38,7 +38,13 @@ class OrderGateway extends QueryableGateway //Replace NameGateway with the name 
             $query->where('Order.gibbonPersonID = :gibbonPersonID')
                 ->bindValue('gibbonPersonID', $gibbonPersonID);
         }
-        
+         $criteria->addFilterRules([
+            'deptID' => function($query, $deptID) {
+                return $query
+                    ->where('Order.deptID = :deptID')
+                    ->bindValue('deptID', $deptID);
+            },
+        ]);
         return $this->runQuery($query, $criteria);
     }
     

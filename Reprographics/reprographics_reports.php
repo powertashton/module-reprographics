@@ -43,12 +43,19 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         ->sortBy('orderStatus', 'ASC')
         ->sortBy('orderID', 'DESC')
         ->fromPOST();
+    
+   
     $orders = $orderGateway->queryOrders($criteria);
     $viewMode = isset($_REQUEST['format']) ? $_REQUEST['format'] : '';
-    $table = ReportTable::createPaginated('orders', $criteria)->setViewMode($viewMode, $gibbon->session);;
+    $table = ReportTable::createPaginated('orders', $criteria)->setViewMode($viewMode, $gibbon->session);
+     $departments = $deptGateway->selectDepts()->toDataSet()->toArray();
+    foreach ($departments as $department) {
+        $table->addMetaData('filterOptions', [
+            'deptID:' . $department['deptID'] => __('Department') . ': ' . $department['deptName'],
+        ]);
+    }    
         $table->setTitle('Orders');
         
-        $table->addColumn('orderID', __('orderID'));
         $table->addColumn('deptID', __('Department'))
             ->format(function ($row) use ($deptGateway) {
                 $dept = $deptGateway->getByID($row['deptID']);
