@@ -20,6 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 use Gibbon\Services\Format;
 use Gibbon\Forms\Form;
 use Gibbon\Tables\DataTable;
+use Gibbon\Tables\Prefab\ReportTable;
 use Gibbon\Domain\User\UserGateway;
 use Gibbon\Module\Reprographics\Domain\OrderGateway;
 use Gibbon\Module\Reprographics\Domain\DepartmentGateway;
@@ -39,7 +40,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $startDate = isset($_GET['startDate']) ? Format::dateConvert($_GET['startDate']) : $d->format('Y-m-d');
     $endDate = isset($_GET['endDate']) ? Format::dateConvert($_GET['endDate']) : date('Y-m-d');
     $viewMode = isset($_REQUEST['format']) ? $_REQUEST['format'] : '';
-   
+        
+    if (empty($viewMode)) {
         $page->breadcrumbs->add(__('Records'));
         //Filter
         $form = Form::create('reports', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
@@ -65,7 +67,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             $row->addSubmit();
 
         echo $form->getOutput();
-    
+    }
 
     $orderGateway = $container->get(OrderGateway::class);
     $deptGateway = $container->get(DepartmentGateway::class);
@@ -85,16 +87,23 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     
    
     $orders = $orderGateway->queryOrders($criteria);
-    $table = DataTable::createPaginated('orders', $criteria);
+    $table = ReportTable::createPaginated('orders', $criteria)->setViewMode($viewMode, $gibbon->session);
+     if (empty($viewMode)) {
         $departments = $deptGateway->selectDepts()->fetchAll();    
         foreach ($departments as $department) {
             $table->addMetaData('filterOptions', [
                 'deptID:' . $department['deptID'] => __('Department') . ': ' . $department['deptName'],
             ]);
+            
         }    
-
+        $statusFilter = [
+                'orderStatus:Approved' => __('Status').': '.__('Approved'),
+                'orderStatus:Pending'    => __('Status').': '.__('Pending'),
+                'orderStatus:Rejected'   => __('Status').': '.__('Rejected')
+            ];
+        $table->addMetaData('filterOptions', $statusFilter);
         $table->setTitle('Orders');
-        
+    }    
         $table->addColumn('deptID', __('Department'))
             ->format(function ($row) use ($deptGateway) {
                 $dept = $deptGateway->getByID($row['deptID']);
@@ -120,7 +129,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             return $output;
         });
         $table->addColumn('quantity', __('Quantity'));
-        $table->addColumn('cost', __('Cost'))->format(function ($row) use ($itemGateway) {
+        $table->addColumn('totalCost', __('Total Cost'))->format(function ($row) use ($itemGateway) {
                 $item = $itemGateway->getByID($row['itemID']);
                 $output = $item['salePrice'] * $row['quantity'];
 
@@ -128,7 +137,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             });
         $table->addColumn('orderStatus', __('Status'));
         $table->addColumn('orderDate', __('Date'));
-        
+        if (empty($viewMode)) {
         $table->addActionColumn()
             ->addParam('orderID')
             ->addParam('itemID')
@@ -145,5 +154,6 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                         ->setIcon('iconCross');
                 }
             });
+        }
     echo $table->render($orders);
 }	

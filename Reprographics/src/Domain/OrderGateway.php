@@ -43,6 +43,10 @@ class OrderGateway extends QueryableGateway //Replace NameGateway with the name 
                 return $query
                     ->where('Order.deptID = :deptID')
                     ->bindValue('deptID', $deptID);
+            },'orderStatus' => function($query, $orderStatus) {
+                return $query
+                    ->where('Order.orderStatus = :orderStatus')
+                    ->bindValue('orderStatus', $orderStatus);
             },
              'startDate' => function ($query, $startDate) {
                 return $query

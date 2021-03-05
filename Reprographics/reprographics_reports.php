@@ -119,8 +119,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
                     
                     
-                    $orders = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID])->fetchAll();
-                    var_dump($orders);
+                    $orders = $orderGateway->selectBy(['itemID' => $item['itemID']])->fetchAll();
+
                     foreach ($orders as $order){
                         $table->addColumn('order'.$order['orderID'], __($item['itemName']))->addClass('col-span-7');
                         $table->addColumn('order'.$order['orderID'].'quantity', __($order['quantity']))->addClass('col-span-1');
