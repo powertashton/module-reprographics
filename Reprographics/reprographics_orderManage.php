@@ -1,4 +1,3 @@
-	
 <?php
 /*
 Gibbon, Flexible & Open School System
@@ -27,14 +26,11 @@ use Gibbon\Module\Reprographics\Domain\DepartmentGateway;
 use Gibbon\Module\Reprographics\Domain\ItemGateway;
 use Gibbon\Module\Reprographics\Domain\SubCategoryGateway;
 use Gibbon\Module\Reprographics\Domain\CategoryGateway;
-
-
-if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_reports.php')) {
+if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_orderManage.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
 } else {
     //Proceed!
-    
     //Default Data
     $d = new DateTime('first day of this month');
     $startDate = isset($_GET['startDate']) ? Format::dateConvert($_GET['startDate']) : $d->format('Y-m-d');
@@ -45,7 +41,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $page->breadcrumbs->add(__('Records'));
         //Filter
         $form = Form::create('reports', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
-        $form->addHiddenValue('q', '/modules/' . $gibbon->session->get('module') . '/reprographics_reports.php');
+        $form->addHiddenValue('q', '/modules/' . $gibbon->session->get('module') . '/reprographics_orderManage.php');
         $form->setTitle('Filter');
 
         $row = $form->addRow();
@@ -78,37 +74,45 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $categoryGateway = $container->get(CategoryGateway::class);
     
     $criteria = $orderGateway->newQueryCriteria(true)
-        ->sortBy('orderStatus', 'ASC')
-        ->sortBy('orderID', 'DESC')
+        ->sortBy('orderStatus', 'DESC')
+        ->sortBy('orderID', 'ASC')
         ->filterBy('startDate', $startDate)
         ->filterBy('endDate', date('Y-m-d 23:59:59', strtotime($endDate)))
         ->fromPost();
-
-    
-   
+        
     $orders = $orderGateway->queryOrders($criteria);
     $table = ReportTable::createPaginated('orders', $criteria)->setViewMode($viewMode, $gibbon->session);
-     if (empty($viewMode)) {
         $departments = $deptGateway->selectDepts()->fetchAll();    
         foreach ($departments as $department) {
             $table->addMetaData('filterOptions', [
                 'deptID:' . $department['deptID'] => __('Department') . ': ' . $department['deptName'],
             ]);
-            
         }    
         $statusFilter = [
                 'orderStatus:Approved' => __('Status').': '.__('Approved'),
                 'orderStatus:Pending'    => __('Status').': '.__('Pending'),
-                'orderStatus:Rejected'   => __('Status').': '.__('Rejected')
+                'orderStatus:Denied'   => __('Status').': '.__('Denied')
             ];
         $table->addMetaData('filterOptions', $statusFilter);
+    
+        $table->modifyRows(function($order, $row) {
+            if ($order['orderStatus'] == 'Approved') {
+                $row->addClass('current');
+            } else if ($order['orderStatus'] == 'Denied') {
+                $row->addClass('error');
+            } else if ($order['orderStatus'] == 'Pending') {
+                $row->addClass('warning');
+            }
+
+            return $row;
+        });
+
         $table->setTitle('Orders');
-    }    
+ 
         $table->addColumn('deptID', __('Department'))
             ->format(function ($row) use ($deptGateway) {
                 $dept = $deptGateway->getByID($row['deptID']);
                 $output = $dept['deptName'];
-
                 return $output;
             });
         
@@ -125,14 +129,12 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             $category = $categoryGateway->getByID($item['categoryID']);
             $subCategory = $subCategoryGateway->getByID($item['subCategoryID']);
             $output = $category['categoryName'] . ' - ' . $subCategory['subCategoryName'] . ' - ' . $item['itemName'];
-
             return $output;
         });
         $table->addColumn('quantity', __('Quantity'));
         $table->addColumn('totalCost', __('Total Cost'))->format(function ($row) use ($itemGateway) {
                 $item = $itemGateway->getByID($row['itemID']);
                 $output = $item['salePrice'] * $row['quantity'];
-
                 return $output;
             });
         $table->addColumn('orderStatus', __('Status'));
@@ -148,9 +150,9 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                         ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_orderApproveProcess.php')
                         ->addParam('job', 'Approved')
                         ->setIcon('iconTick');
-                 $actions->addAction('reject', __('Reject'))
+                 $actions->addAction('reject', __('Deny'))
                         ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_orderApproveProcess.php')
-                        ->addParam('job', 'Rejected')
+                        ->addParam('job', 'Denied')
                         ->setIcon('iconCross');
                 }
             });

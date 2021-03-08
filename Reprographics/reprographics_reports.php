@@ -109,17 +109,17 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             $subCategories = $subCategoryGateway->selectSubCategories($category['categoryID'])->toDataSet();
             foreach ($subCategories as $subCategory){
             
-                $table->addColumn('subcat'.$subCategory['subCategoryID'], __($subCategory['subCategoryName']))->addClass('col-span-7');
-                $table->addColumn($subCategory['subCategoryID'].'quantity', __('Quantity'))->addClass('col-span-1');
-                $table->addColumn($subCategory['subCategoryID'].'price', __('Price'))->addClass('col-span-1');
-                $table->addColumn($subCategory['subCategoryID'].'tprice', __('Total Price'))->addClass('col-span-1');
+                $table->addColumn('subcat'.$subCategory['subCategoryID'], __($subCategory['subCategoryName']))->addClass('col-span-7')->addClass('current');
+                $table->addColumn($subCategory['subCategoryID'].'quantity', __('Quantity'))->addClass('col-span-1')->addClass('current');
+                $table->addColumn($subCategory['subCategoryID'].'price', __('Price'))->addClass('col-span-1')->addClass('current');
+                $table->addColumn($subCategory['subCategoryID'].'tprice', __('Total Price'))->addClass('col-span-1')->addClass('current');
                 $items = $itemGateway->selectBy(['subCategoryID' => $subCategory['subCategoryID']])->fetchAll();
                 $totalPrice = 0;
                 foreach ($items as $item){
 
                     
                     
-                    $orders = $orderGateway->selectBy(['itemID' => $item['itemID']])->fetchAll();
+                    $orders = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID])->fetchAll();
 
                     foreach ($orders as $order){
                         $table->addColumn('order'.$order['orderID'], __($item['itemName']))->addClass('col-span-7');
