@@ -38,8 +38,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $d = new DateTime('first day of this month');
         $startDate = isset($_GET['startDate']) ? Format::dateConvert($_GET['startDate']) : $d->format('Y-m-d');
         $endDate = isset($_GET['endDate']) ? Format::dateConvert($_GET['endDate']) : date('Y-m-d');
-        $deptID = isset($_GET['deptID']) ?? '';
-        
+        $deptID = isset($_GET['deptID']) ? $_GET['deptID'] : '';
+
         $deptGateway = $container->get(DepartmentGateway::class);
         $departments = $deptGateway->selectDepts()->fetchAll(); 
         $orderGateway = $container->get(OrderGateway::class);
@@ -88,7 +88,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             $row->addLabel('deptID', __('Department'))->description(__('Leave blank for all'));
             $row->addSelect('deptID')
                 ->placeholder('Please Select...')
-                ->fromArray($departmentOptions);      
+                ->fromArray($departmentOptions)->selected($deptID);      
                 
         $row = $form->addRow();
             $row->addFooter();
@@ -96,7 +96,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
         echo $form->getOutput();
         
-        
+        $totalTotalPrice = 0;
         $categories = $categoryGateway->selectCategories()->toDataSet();
         foreach ($categories as $category) {
             
@@ -116,8 +116,6 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 $items = $itemGateway->selectBy(['subCategoryID' => $subCategory['subCategoryID']])->fetchAll();
                 $totalPrice = 0;
                 foreach ($items as $item){
-
-                    
                     
                     $orders = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID])->fetchAll();
 
@@ -134,13 +132,14 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 }
                 $table->addColumn('subCategory'.$item['subCategoryID'].'title', __('Total'))->addClass('col-span-9');
                 $table->addColumn('subCategory'.$item['subCategoryID'].'totalPrice', __($totalPrice))->addClass('col-span-1');
+                $totalTotalPrice += $totalPrice;
             }
             
             echo $table->render([$category]);
         }
+        echo '<h3> Sub Total: ' . $totalTotalPrice;
         
         
-        $orders = $orderGateway->queryOrders($criteria)->toArray();
         
         
 }
