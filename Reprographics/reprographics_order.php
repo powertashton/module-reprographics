@@ -17,12 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+use Gibbon\Services\Format;
 use Gibbon\Forms\Form;
-use Gibbon\Module\Reprographics\Domain\ItemGateway;
 use Gibbon\Tables\DataTable;
+use Gibbon\Domain\User\UserGateway;
 use Gibbon\Module\Reprographics\Domain\OrderGateway;
-use Gibbon\Module\Reprographics\Domain\StaffGateway;
 use Gibbon\Module\Reprographics\Domain\DepartmentGateway;
+use Gibbon\Module\Reprographics\Domain\ItemGateway;
+use Gibbon\Module\Reprographics\Domain\SubCategoryGateway;
+use Gibbon\Module\Reprographics\Domain\CategoryGateway;
+use Gibbon\Module\Reprographics\Domain\StaffGateway;
 // Module includes
 require_once __DIR__ . '/moduleFunctions.php';
 
@@ -92,24 +96,63 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
 
         $orderGateway = $container->get(OrderGateway::class);
-    
+        $deptGateway = $container->get(DepartmentGateway::class);
+        $userGateway = $container->get(UserGateway::class);
+        $itemGateway = $container->get(ItemGateway::class);
+        $userGateway = $container->get(UserGateway::class);
+        $subCategoryGateway = $container->get(SubCategoryGateway::class);
+        $categoryGateway = $container->get(CategoryGateway::class);
+        
         $criteria = $orderGateway->newQueryCriteria(true)
-            ->sortBy('orderStatus', 'ASC')
+            ->sortBy('orderStatus', 'DESC')
             ->sortBy('orderID', 'DESC')
             ->fromPOST();
         $orders = $orderGateway->queryOrders($criteria, $gibbonPersonID);
 
         $table = DataTable::create('orders');
             $table->setTitle('Your Orders');
+            $table->modifyRows(function($order, $row) {
+            if ($order['orderStatus'] == 'Approved') {
+                $row->addClass('current');
+            } else if ($order['orderStatus'] == 'Denied') {
+                $row->addClass('error');
+            } else if ($order['orderStatus'] == 'Pending') {
+                $row->addClass('warning');
+            }
 
+            return $row;
+        });
+
+        $table->addColumn('deptID', __('Department'))
+            ->format(function ($row) use ($deptGateway) {
+                $dept = $deptGateway->getByID($row['deptID']);
+                $output = $dept['deptName'];
+                return $output;
+            });
         
-            $table->addColumn('orderID', __('orderID'));
-            $table->addColumn('deptID', __('deptID'));
-            $table->addColumn('gibbonPersonID', __('gibbonPersonID'));
-            $table->addColumn('itemID', __('itemID'));
-            $table->addColumn('quantity', __('quantity'));
-            $table->addColumn('orderStatus', __('orderStatus'));
-            $table->addColumn('orderDate', __('orderDate'));
+        $table->addColumn('gibbonPersonID', __('Owner'))
+            ->format(function ($row) use ($userGateway) {
+                $owner = $userGateway->getByID($row['gibbonPersonID']);
+                $output = Format::name($owner['title'], $owner['preferredName'], $owner['surname'], 'Staff');
+                return $output;
+            });
+            
+        $table->addColumn('itemID', __('Item'))
+        ->format(function ($row) use ($itemGateway, $subCategoryGateway, $categoryGateway) {
+            $item = $itemGateway->getByID($row['itemID']);
+            $category = $categoryGateway->getByID($item['categoryID']);
+            $subCategory = $subCategoryGateway->getByID($item['subCategoryID']);
+            $output = $category['categoryName'] . ' - ' . $subCategory['subCategoryName'] . ' - ' . $item['itemName'];
+            return $output;
+        });
+        $table->addColumn('quantity', __('Quantity'));
+        $table->addColumn('totalCost', __('Total Cost'))->format(function ($row) use ($itemGateway) {
+                $item = $itemGateway->getByID($row['itemID']);
+                $output = $item['salePrice'] * $row['quantity'];
+                return $output;
+            });
+        $table->addColumn('orderStatus', __('Status'));
+        $table->addColumn('orderDate', __('Date'));
         echo $table->render($orders);
     }
 }	

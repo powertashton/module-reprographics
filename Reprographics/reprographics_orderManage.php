@@ -77,7 +77,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     
     $criteria = $orderGateway->newQueryCriteria(true)
         ->sortBy('orderStatus', 'DESC')
-        ->sortBy('orderID', 'ASC')
+        ->sortBy('orderID', 'DESC')
         ->filterBy('startDate', $startDate)
         ->filterBy('endDate', date('Y-m-d 23:59:59', strtotime($endDate)))
         ->filterBy('deptID', $deptID)
