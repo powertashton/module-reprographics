@@ -116,9 +116,11 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 $items = $itemGateway->selectBy(['subCategoryID' => $subCategory['subCategoryID']])->fetchAll();
                 $totalPrice = 0;
                 foreach ($items as $item){
-                    //TODO: When deptID is not set show results for all depts
-                    $orders = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID])->fetchAll();
-                    
+                    if (isset($_GET['deptID'])) {
+                        $orders = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
+                    } else {
+                        $orders = $orderGateway->selectBy(['itemID' => $item['itemID'], 'orderStatus' => 'Approved'])->fetchAll();
+                    }
 
                     foreach ($orders as $order){
                         $table->addColumn('order'.$order['orderID'], __($item['itemName']))->addClass('col-span-7');
