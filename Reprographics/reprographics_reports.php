@@ -116,8 +116,9 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 $items = $itemGateway->selectBy(['subCategoryID' => $subCategory['subCategoryID']])->fetchAll();
                 $totalPrice = 0;
                 foreach ($items as $item){
-                    
+                    //TODO: When deptID is not set show results for all depts
                     $orders = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID])->fetchAll();
+                    
 
                     foreach ($orders as $order){
                         $table->addColumn('order'.$order['orderID'], __($item['itemName']))->addClass('col-span-7');
@@ -137,7 +138,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             
             echo $table->render([$category]);
         }
-        echo '<h3> Sub Total: ' . $totalTotalPrice;
+        echo '<h3> Sub Total: ' . $totalTotalPrice . '</h3>';
         
         
         

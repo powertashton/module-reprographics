@@ -36,7 +36,9 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $startDate = isset($_GET['startDate']) ? Format::dateConvert($_GET['startDate']) : $d->format('Y-m-d');
     $endDate = isset($_GET['endDate']) ? Format::dateConvert($_GET['endDate']) : date('Y-m-d');
     $viewMode = isset($_REQUEST['format']) ? $_REQUEST['format'] : '';
-        
+    $deptID = isset($_GET['deptID']) ? $_GET['deptID'] : '';
+    $orderStatus = isset($_GET['orderStatus']) ? $_GET['orderStatus'] : '';
+    
     if (empty($viewMode)) {
         $page->breadcrumbs->add(__('Records'));
         //Filter
@@ -78,10 +80,22 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         ->sortBy('orderID', 'ASC')
         ->filterBy('startDate', $startDate)
         ->filterBy('endDate', date('Y-m-d 23:59:59', strtotime($endDate)))
+        ->filterBy('deptID', $deptID)
+        ->filterBy('orderStatus', $orderStatus)
         ->fromPost();
         
     $orders = $orderGateway->queryOrders($criteria);
     $table = ReportTable::createPaginated('orders', $criteria)->setViewMode($viewMode, $gibbon->session);
+        $table->addHeaderAction('export', __('Export'))
+            ->setURL('/export.php')
+            ->addParams($_GET)
+            ->addParam('format', 'export')
+            ->addParam('orderStatus', $criteria->getFilterValue('orderStatus'))
+            ->addParam('deptID', $criteria->getFilterValue('deptID'))
+            ->displayLabel()
+            ->directLink()
+            ->addClass('mr-2 underline');
+            
         $departments = $deptGateway->selectDepts()->fetchAll();    
         foreach ($departments as $department) {
             $table->addMetaData('filterOptions', [
