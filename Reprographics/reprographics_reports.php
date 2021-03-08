@@ -85,9 +85,9 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             }, []);
         
         $row = $form->addRow();
-            $row->addLabel('deptID', __('Department'))->description(__('Leave blank for all'));
+            $row->addLabel('deptID', __('Department'));
             $row->addSelect('deptID')
-                ->placeholder('Please Select...')
+                ->placeholder('All Departments')
                 ->fromArray($departmentOptions)->selected($deptID);      
                 
         $row = $form->addRow();
@@ -140,9 +140,5 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             
             echo $table->render([$category]);
         }
-        echo '<h3> Sub Total: ' . $totalTotalPrice . '</h3>';
-        
-        
-        
-        
+        echo '<h3> Sub Total: ' . $totalTotalPrice . '</h3>';    
 }
