@@ -21,11 +21,13 @@ use Gibbon\Forms\Form;
 use Gibbon\Tables\DataTable;
 use Gibbon\Tables\Prefab\ReportTable;
 use Gibbon\Domain\User\UserGateway;
+use Gibbon\Forms\DatabaseFormFactory;
 use Gibbon\Module\Reprographics\Domain\OrderGateway;
 use Gibbon\Module\Reprographics\Domain\DepartmentGateway;
 use Gibbon\Module\Reprographics\Domain\ItemGateway;
 use Gibbon\Module\Reprographics\Domain\SubCategoryGateway;
 use Gibbon\Module\Reprographics\Domain\CategoryGateway;
+use Gibbon\Module\Reprographics\Domain\StaffGateway;
 if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographics_orderManage.php')) {
 	// Access denied
 	$page->addError(__('You do not have access to this action.'));
@@ -38,11 +40,21 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $viewMode = isset($_REQUEST['format']) ? $_REQUEST['format'] : '';
     $deptID = isset($_GET['deptID']) ? $_GET['deptID'] : '';
     $orderStatus = isset($_GET['orderStatus']) ? $_GET['orderStatus'] : '';
+    $gibbonPersonID = isset($_GET['gibbonPersonID']) ? $_GET['gibbonPersonID'] : '';
+    
+    $orderGateway = $container->get(OrderGateway::class);
+    $deptGateway = $container->get(DepartmentGateway::class);
+    $userGateway = $container->get(UserGateway::class);
+    $itemGateway = $container->get(ItemGateway::class);
+    $subCategoryGateway = $container->get(SubCategoryGateway::class);
+    $categoryGateway = $container->get(CategoryGateway::class);
+    $staffGateway = $container->get(StaffGateway::class);
     
     if (empty($viewMode)) {
         $page->breadcrumbs->add(__('Records'));
         //Filter
         $form = Form::create('reports', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
+        $form->setFactory(DatabaseFormFactory::create($pdo));
         $form->addHiddenValue('q', '/modules/' . $gibbon->session->get('module') . '/reprographics_orderManage.php');
         $form->setTitle('Filter');
 
@@ -61,19 +73,16 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 ->required();
 
         $row = $form->addRow();
+            $row->addLabel('gibbonPersonID', __('Person'));
+            $row->addSelectStaff('gibbonPersonID')->selected($gibbonPersonID);
+                
+        $row = $form->addRow();
             $row->addFooter();
             $row->addSubmit();
 
         echo $form->getOutput();
     }
 
-    $orderGateway = $container->get(OrderGateway::class);
-    $deptGateway = $container->get(DepartmentGateway::class);
-    $userGateway = $container->get(UserGateway::class);
-    $itemGateway = $container->get(ItemGateway::class);
-    $userGateway = $container->get(UserGateway::class);
-    $subCategoryGateway = $container->get(SubCategoryGateway::class);
-    $categoryGateway = $container->get(CategoryGateway::class);
     
     $criteria = $orderGateway->newQueryCriteria(true)
         ->sortBy('orderStatus', 'DESC')
@@ -84,7 +93,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         ->filterBy('orderStatus', $orderStatus)
         ->fromPost();
         
-    $orders = $orderGateway->queryOrders($criteria);
+    $orders = $orderGateway->queryOrders($criteria, $gibbonPersonID);
     $table = ReportTable::createPaginated('orders', $criteria)->setViewMode($viewMode, $gibbon->session);
         $table->addHeaderAction('export', __('Export'))
             ->setURL('/export.php')
