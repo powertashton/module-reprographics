@@ -61,8 +61,17 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         //Filter
         $form = Form::create('reports', $gibbon->session->get('absoluteURL') . '/index.php', 'get');
         $form->addHiddenValue('q', '/modules/' . $gibbon->session->get('module') . '/reprographics_reports.php');
-        $form->setTitle('Generate Report');
-
+        $form->setTitle('Report');
+        $form->addHeaderAction('print', __('Print'))
+            ->setURL('/report.php')
+            ->addParams($_GET)
+            ->addParam('format', 'print')
+            ->addParam('search', $criteria->getSearchText(true))
+            ->setTarget('_blank')
+            ->displayLabel()
+            ->directLink()
+            ->addClass('mr-2 underline');
+            
         $row = $form->addRow();
             $row->addLabel('startDate', __('Start Date Filter'));
             $row->addDate('startDate')
@@ -101,7 +110,6 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         foreach ($categories as $category) {
             
             $table = DataTable::createDetails($category['categoryID']);
-            
 
             $table->setTitle($category['categoryName']);
             $table->addMetaData('gridClass', 'grid-cols-10');

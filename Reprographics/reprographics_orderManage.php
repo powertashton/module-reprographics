@@ -41,7 +41,6 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
     $deptID = isset($_GET['deptID']) ? $_GET['deptID'] : '';
     $orderStatus = isset($_GET['orderStatus']) ? $_GET['orderStatus'] : '';
     $gibbonPersonID = isset($_GET['gibbonPersonID']) ? $_GET['gibbonPersonID'] : '';
-    
     $orderGateway = $container->get(OrderGateway::class);
     $deptGateway = $container->get(DepartmentGateway::class);
     $userGateway = $container->get(UserGateway::class);
@@ -74,7 +73,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
         $row = $form->addRow();
             $row->addLabel('gibbonPersonID', __('Person'));
-            $row->addSelectStaff('gibbonPersonID')->selected($gibbonPersonID);
+            $row->addSelectStaff('gibbonPersonID')->placeholder(__('All Users'))->selected($gibbonPersonID);
                 
         $row = $form->addRow();
             $row->addFooter();
