@@ -122,7 +122,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                     $table->addColumn($subCategory['subCategoryID'].'quantity', __('Quantity'))->addClass('col-span-1')->addClass('current');
                     $table->addColumn($subCategory['subCategoryID'].'price', __('Price'))->addClass('col-span-1')->addClass('current');
                     $table->addColumn($subCategory['subCategoryID'].'tprice', __('Total Price'))->addClass('col-span-1')->addClass('current');
-                
+                    //TODO: DON'T SHOW COLUMN UNLESS THERE ARE ORDERS.... HHH?????
                     $totalPrice = 0;
                     foreach ($items as $item){
                         if (isset($_GET['deptID'])) {
