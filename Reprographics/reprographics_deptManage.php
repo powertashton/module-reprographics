@@ -40,13 +40,14 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             }
             return implode(', ', array_column($staff, 'gibbonPersonID'));
         };
+    //TODO: use the user gateway to return formatted names
     $table = DataTable::create('depts');
         $table->setTitle('Departments');
 
         $table->addHeaderAction('add', __('Add'))
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_deptManageAdd.php');
 
-        $table->addColumn('deptName', __('Department Name'));
+        //$table->addColumn('deptName', __('Department Name'));
         $table->addColumn('staff', __('Staff'))->format($formatStaffList);
         $table->addActionColumn()
                 ->addParam('deptID')
