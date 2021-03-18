@@ -63,11 +63,11 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
     $row = $form->addRow();
         $row->addLabel('realPrice', __('Real Price'));
-        $row->addNumber('realPrice')->decimalPlaces(0)->maximum(9999)->setValue('0');
+        $row->addNumber('realPrice')->decimalPlaces(2)->maximum(9999)->setValue('0.00');
         
     $row = $form->addRow();
         $row->addLabel('salePrice', __('Sale Price'));
-        $row->addNumber('salePrice')->decimalPlaces(0)->maximum(9999)->setValue('0');
+        $row->addNumber('salePrice')->decimalPlaces(2)->maximum(9999)->setValue('0.00');
     
     $form->loadAllValuesFrom($values);
     

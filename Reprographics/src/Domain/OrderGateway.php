@@ -15,14 +15,14 @@ class OrderGateway extends QueryableGateway //Replace NameGateway with the name 
 {
     use TableAware;
 
-    private static $tableName = 'Order'; //The name of the table you will primarily be querying
+    private static $tableName = 'ReprographicsOrder'; //The name of the table you will primarily be querying
     private static $primaryKey = 'orderID'; //The primaryKey of said table
     private static $searchableColumns = []; // Optional: Array of Columns to be searched when using the search filter
     
     public function selectOrders() { 
         $select = $this
             ->newSelect()
-            ->from('Order')
+            ->from('ReprographicsOrder')
             ->cols(['orderID', 'itemID', 'deptID', 'gibbonPersonID','quantity', 'orderStatus', 'orderDate']);
 
         return $this->runSelect($select);
@@ -31,21 +31,21 @@ class OrderGateway extends QueryableGateway //Replace NameGateway with the name 
     public function queryOrders($criteria, $gibbonPersonID = null) { 
         $query = $this
             ->newQuery()
-            ->from('Order')
+            ->from('ReprographicsOrder')
             ->cols(['orderID', 'itemID', 'deptID', 'gibbonPersonID','quantity', 'orderStatus', 'orderDate']);
         
         if (!empty($gibbonPersonID)) {
-            $query->where('Order.gibbonPersonID = :gibbonPersonID')
+            $query->where('ReprographicsOrder.gibbonPersonID = :gibbonPersonID')
                 ->bindValue('gibbonPersonID', $gibbonPersonID);
         }
          $criteria->addFilterRules([
             'deptID' => function($query, $deptID) {
                 return $query
-                    ->where('Order.deptID = :deptID')
+                    ->where('ReprographicsOrder.deptID = :deptID')
                     ->bindValue('deptID', $deptID);
             },'orderStatus' => function($query, $orderStatus) {
                 return $query
-                    ->where('Order.orderStatus = :orderStatus')
+                    ->where('ReprographicsOrder.orderStatus = :orderStatus')
                     ->bindValue('orderStatus', $orderStatus);
             },
              'startDate' => function ($query, $startDate) {

@@ -47,12 +47,12 @@ $moduleTables[$tables++] = 'CREATE TABLE `Item` (
     `subCategoryID` int(12) unsigned zerofill NOT NULL,
     `categoryID` int(12) unsigned zerofill NOT NULL,
     `itemName` varchar(55) NOT NULL,
-    `salePrice` int(12) NOT NULL,
-    `realPrice` int(12) NOT NULL,
+    `salePrice` DECIMAL(12,2) NOT NULL,
+    `realPrice` DECIMAL(12,2) NOT NULL,
     `stock` int(12) NOT NULL,
     PRIMARY KEY (`itemID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
-$moduleTables[$tables++] = 'CREATE TABLE `Order` (
+$moduleTables[$tables++] = 'CREATE TABLE `ReprographicsOrder` (
     `orderID` int(12) unsigned zerofill NOT NULL AUTO_INCREMENT,
     `itemID` int(12) unsigned zerofill NOT NULL,
     `deptID` int(12) unsigned zerofill NOT NULL,
