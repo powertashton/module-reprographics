@@ -117,7 +117,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             $subCategories = $subCategoryGateway->selectSubCategories($category['categoryID'])->toDataSet();
             foreach ($subCategories as $subCategory){
                 $items = $itemGateway->selectBy(['subCategoryID' => $subCategory['subCategoryID']])->fetchAll();
-                if($items > 0){
+                if($items){
                     $table->addColumn('subcat'.$subCategory['subCategoryID'], __($subCategory['subCategoryName']))->addClass('col-span-7')->addClass('current');
                     $table->addColumn($subCategory['subCategoryID'].'quantity', __('Quantity'))->addClass('col-span-1')->addClass('current');
                     $table->addColumn($subCategory['subCategoryID'].'price', __('Price'))->addClass('col-span-1')->addClass('current');
