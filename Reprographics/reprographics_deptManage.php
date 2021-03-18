@@ -47,8 +47,8 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
         $table->addHeaderAction('add', __('Add'))
                 ->setURL('/modules/' . $gibbon->session->get('module') . '/reprographics_deptManageAdd.php');
 
-        //$table->addColumn('deptName', __('Department Name'));
-        $table->addColumn('staff', __('Staff'))->format($formatStaffList);
+        $table->addColumn('deptName', __('Department Name'));
+        //$table->addColumn('staff', __('Staff'))->format($formatStaffList);
         $table->addActionColumn()
                 ->addParam('deptID')
                 ->format(function ($department, $actions) use ($gibbon, $data) {
