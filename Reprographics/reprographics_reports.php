@@ -105,48 +105,52 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
         echo $form->getOutput();
         
-        $totalTotalPrice = 0;
-        $categories = $categoryGateway->selectCategories()->toDataSet();
-        foreach ($categories as $category) {
-            
-            $table = DataTable::createDetails($category['categoryID']);
-
-            $table->setTitle($category['categoryName']);
-            $table->addMetaData('gridClass', 'grid-cols-10');
-            
-            $subCategories = $subCategoryGateway->selectSubCategories($category['categoryID'])->toDataSet();
-            foreach ($subCategories as $subCategory){
-                $items = $itemGateway->selectBy(['subCategoryID' => $subCategory['subCategoryID']])->fetchAll();
-                if($items){
-                    $table->addColumn('subcat'.$subCategory['subCategoryID'], __($subCategory['subCategoryName']))->addClass('col-span-7')->addClass('current');
-                    $table->addColumn($subCategory['subCategoryID'].'quantity', __('Quantity'))->addClass('col-span-1')->addClass('current');
-                    $table->addColumn($subCategory['subCategoryID'].'price', __('Price'))->addClass('col-span-1')->addClass('current');
-                    $table->addColumn($subCategory['subCategoryID'].'tprice', __('Total Price'))->addClass('col-span-1')->addClass('current');
-                    //TODO: DON'T SHOW COLUMN UNLESS THERE ARE ORDERS.... HHH?????
-                    $totalPrice = 0;
-                    foreach ($items as $item){
-                        if (isset($_GET['deptID'])) {
-                            $orders = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
-                        } else {
-                            $orders = $orderGateway->selectBy(['itemID' => $item['itemID'], 'orderStatus' => 'Approved'])->fetchAll();
+        if (isset($_GET['deptID'])) { //TODO: make this page work when no dept is selected to show all records
+            $orders = $orderGateway->selectBy(['deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
+            $items =  array_unique(array_column($orders, 'itemID'));
+            foreach ($items as $item){
+                $itemData = $itemGateway->selectBy(['itemID' => $item])->fetchAll();
+                $categories[] = $itemData[0]['categoryID'];
+                $subCategories[] = $itemData[0]['subCategoryID']; 
+            }
+            $totalTotalPrice = 0;
+            $categories = array_unique($categories);
+            $subcategories = array_unique($subCategories);
+            foreach ($categories as $category) {
+                $categoryData = $categoryGateway->selectBy(['categoryID' => $category])->fetchAll();
+                $table = DataTable::createDetails($category);
+                $table->addMetaData('gridClass', 'grid-cols-10');
+                $table->setTitle($categoryData[0]['categoryName']);
+                foreach ($subCategories as $subCategory){
+                    $subCategoryData = $subCategoryGateway->selectBy(['subCategoryID' => $subCategory, 'categoryID' => $category])->fetch();
+                    var_dump($subCategoryData);
+                    if($subCategoryData){
+                        $table->addColumn('subcat'.$subCategoryData['subCategoryID'], __($subCategoryData['subCategoryName']))->addClass('col-span-7')->addClass('current');
+                        $table->addColumn($subCategoryData['subCategoryID'].'quantity', __('Quantity'))->addClass('col-span-1')->addClass('current');
+                        $table->addColumn($subCategoryData['subCategoryID'].'price', __('Price'))->addClass('col-span-1')->addClass('current');
+                        $table->addColumn($subCategoryData['subCategoryID'].'tprice', __('Total Price'))->addClass('col-span-1')->addClass('current');
+                        $itemData = $itemGateway->selectBy(['subCategoryID' => $subCategory])->fetchAll();
+                        $totalPrice = 0;
+                        foreach ($itemData as $item){
+                            $orderData = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
+                            foreach ($orderData as $order){
+                                $table->addColumn('order'.$order['orderID'], __($item['itemName']))->addClass('col-span-7');
+                                $table->addColumn('order'.$order['orderID'].'quantity', __($order['quantity']))->addClass('col-span-1');
+                                $table->addColumn('order'.$order['orderID'].'price', __($item['salePrice']))->addClass('col-span-1');
+                                $itemTotalPrice = $item['salePrice'] * $order['quantity'];
+                                $table->addColumn('order'.$order['orderID'].'tprice', __($itemTotalPrice))->addClass('col-span-1');
+                                $totalPrice += $itemTotalPrice;
+                            }
                         }
-
-                        foreach ($orders as $order){
-                            $table->addColumn('order'.$order['orderID'], __($item['itemName']))->addClass('col-span-7');
-                            $table->addColumn('order'.$order['orderID'].'quantity', __($order['quantity']))->addClass('col-span-1');
-                            $table->addColumn('order'.$order['orderID'].'price', __($item['salePrice']))->addClass('col-span-1');
-                            $itemTotalPrice = $item['salePrice'] * $order['quantity'];
-                            $table->addColumn('order'.$order['orderID'].'tprice', __($itemTotalPrice))->addClass('col-span-1');
-                            $totalPrice += $itemTotalPrice;
-                        }
+                        $table->addColumn('subCategory'.$subCategoryData['subCategoryID'].'title', __('Total'))->addClass('col-span-9');
+                        $table->addColumn('subCategory'.$subCategoryData['subCategoryID'].'totalPrice', __($totalPrice))->addClass('col-span-1');
+                        $totalTotalPrice += $totalPrice;
                     }
                 }
-                $table->addColumn('subCategory'.$item['subCategoryID'].'title', __('Total'))->addClass('col-span-9');
-                $table->addColumn('subCategory'.$item['subCategoryID'].'totalPrice', __($totalPrice))->addClass('col-span-1');
-                $totalTotalPrice += $totalPrice;
+                
+                echo $table->render([$orders]);
+                
             }
-            
-            echo $table->render([$category]);
+            echo '<h3> Sub Total: ' . $totalTotalPrice . '</h3>';    
         }
-        echo '<h3> Sub Total: ' . $totalTotalPrice . '</h3>';    
 }
