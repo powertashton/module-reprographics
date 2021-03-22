@@ -144,12 +144,12 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                                 $table->addColumn('order'.$order['orderID'].'quantity', __($order['quantity']))->addClass('col-span-1');
                                 $table->addColumn('order'.$order['orderID'].'price', __($item['salePrice']))->addClass('col-span-1');
                                 $itemTotalPrice = $item['salePrice'] * $order['quantity'];
-                                $table->addColumn('order'.$order['orderID'].'tprice', __($itemTotalPrice))->addClass('col-span-1');
+                                $table->addColumn('order'.$order['orderID'].'tprice', __(number_format($itemTotalPrice, 2, '.', ',')))->addClass('col-span-1');
                                 $totalPrice += $itemTotalPrice;
                             }
                         }
                         $table->addColumn('subCategory'.$subCategoryData['subCategoryID'].'title', __('Total'))->addClass('col-span-9');
-                        $table->addColumn('subCategory'.$subCategoryData['subCategoryID'].'totalPrice', __($totalPrice))->addClass('col-span-1');
+                        $table->addColumn('subCategory'.$subCategoryData['subCategoryID'].'totalPrice', __(number_format($totalPrice, 2, '.', ',')))->addClass('col-span-1');
                         $totalTotalPrice += $totalPrice;
                     }
                 }
@@ -157,6 +157,6 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 echo $table->render([$orders]);
                 
             }
-            echo '<h3> Sub Total: ' . $totalTotalPrice . '</h3>';    
+            echo '<h3> Sub Total: ' . number_format($totalTotalPrice, 2, '.', ',') . '</h3>';    
         
 }
