@@ -105,8 +105,11 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
 
         echo $form->getOutput();
         
-        if (isset($_GET['deptID'])) { //TODO: make this page work when no dept is selected to show all records
+        if (isset($_GET['deptID']) && ($_GET['deptID'] != 'All Departments') ) { //TODO: make this page work when no dept is selected to show all records
             $orders = $orderGateway->selectBy(['deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
+        } else {
+            $orders = $orderGateway->selectBy(['orderStatus' => 'Approved'])->fetchAll();
+        }
             $items =  array_unique(array_column($orders, 'itemID'));
             foreach ($items as $item){
                 $itemData = $itemGateway->selectBy(['itemID' => $item])->fetchAll();
@@ -131,7 +134,11 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                         $itemData = $itemGateway->selectBy(['subCategoryID' => $subCategory])->fetchAll();
                         $totalPrice = 0;
                         foreach ($itemData as $item){
+                        if (isset($_GET['deptID']) && ($_GET['deptID'] != 'All Departments')){
                             $orderData = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
+                        } else {
+                            $orderData = $orderGateway->selectBy(['itemID' => $item['itemID'], 'orderStatus' => 'Approved'])->fetchAll();
+                        }
                             foreach ($orderData as $order){
                                 $table->addColumn('order'.$order['orderID'], __($item['itemName']))->addClass('col-span-7');
                                 $table->addColumn('order'.$order['orderID'].'quantity', __($order['quantity']))->addClass('col-span-1');
@@ -151,5 +158,5 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 
             }
             echo '<h3> Sub Total: ' . $totalTotalPrice . '</h3>';    
-        }
+        
 }
