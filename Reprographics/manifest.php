@@ -25,7 +25,7 @@ $description = 'A Reprographic module for Gibbon';            // Short text desc
 $entryURL    = "reprographics_order.php";   // The landing page for the unit, used in the main menu
 $type        = "Additional";  // Do not change.
 $category    = 'Other';            // The main menu area to place the module in
-$version     = '0.0.01';            // Version number
+$version     = '0.0.02';            // Version number
 $author      = 'Ashton Power';            // Your name
 $url         = 'https://github.com/powertashton/module-reprographics';            // Your URL
 
@@ -72,6 +72,29 @@ $moduleTables[$tables++] = 'CREATE TABLE `ReprographicsStaff` (
     `gibbonPersonID` int(10) unsigned zerofill NOT NULL,
     `deptID` int(12) unsigned zerofill NOT NULL,
     PRIMARY KEY (`staffID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+$moduleTables[$tables++] = 'CREATE TABLE `Printing` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` date DEFAULT NULL,
+  `department` varchar(45) DEFAULT NULL,
+  `BWA3Duplex` double DEFAULT NULL,
+  `BWA3DuplexPrice` double DEFAULT NULL,
+  `BWA3Simplex` double DEFAULT NULL,
+  `BWA3SimplexPrice` double DEFAULT NULL,
+  `BWA4Duplex` int(11) DEFAULT NULL,
+  `BWA4DuplexPrice` double DEFAULT NULL,
+  `BWA4Simplex` int(11) DEFAULT NULL,
+  `BWA4SimplexPrice` double DEFAULT NULL,
+  `FCA3Duplex` varchar(45) DEFAULT NULL,
+  `FCA3DuplexPrice` varchar(45) DEFAULT NULL,
+  `FCA3Simplex` varchar(45) DEFAULT NULL,
+  `FCA3SimplexPrice` varchar(45) DEFAULT NULL,
+  `FCA4Duplex` int(11) DEFAULT NULL,
+  `FCA4DuplexPrice` double DEFAULT NULL,
+  `FCA4Simplex` int(11) DEFAULT NULL,
+  `FCA4SimplexPrice` double DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idPrinting_UNIQUE` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 
 
@@ -226,6 +249,26 @@ $actionRows[$actionCount++] = [
     'description'               => 'Allows the user to view reports', // Text description
     'URLList'                   => 'reprographics_reports.php', // List of pages included in this action
     'entryURL'                  => 'reprographics_reports.php', // The landing action for the page.
+    'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
+    'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
+    'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin
+    'defaultPermissionTeacher'  => 'N', // Default permission for built in role Teacher
+    'defaultPermissionStudent'  => 'N', // Default permission for built in role Student
+    'defaultPermissionParent'   => 'N', // Default permission for built in role Parent
+    'defaultPermissionSupport'  => 'N', // Default permission for built in role Support
+    'categoryPermissionStaff'   => 'Y', // Should this action be available to user roles in the Staff category?
+    'categoryPermissionStudent' => 'N', // Should this action be available to user roles in the Student category?
+    'categoryPermissionParent'  => 'N', // Should this action be available to user roles in the Parent category?
+    'categoryPermissionOther'   => 'N', // Should this action be available to user roles in the Other category?
+];
+
+$actionRows[$actionCount++] = [
+    'name'                      => 'Printers', // The name of the action (appears to user in the right hand side module menu)
+    'precedence'                => '0',// If it is a grouped action, the precedence controls which is highest action in group
+    'category'                  => 'Printer', // Optional: subgroups for the right hand side module menu
+    'description'               => 'Allows the user to manage printing records', // Text description
+    'URLList'                   => 'reprographics_printers.php', // List of pages included in this action
+    'entryURL'                  => 'reprographics_printers.php', // The landing action for the page.
     'entrySidebar'              => 'Y', // Whether or not there's a sidebar on entry to the action
     'menuShow'                  => 'Y', // Whether or not this action shows up in menus or if it's hidden
     'defaultPermissionAdmin'    => 'Y', // Default permission for built in role Admin

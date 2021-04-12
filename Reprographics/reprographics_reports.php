@@ -104,7 +104,7 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             $row->addSubmit();
 
         echo $form->getOutput();
-        
+        echo '<h3> Stationery</h3>';
         if (isset($_GET['deptID']) && ($_GET['deptID'] != 'All Departments') ) { //TODO: make this page work when no dept is selected to show all records
             $orders = $orderGateway->selectBy(['deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
         } else {
@@ -138,25 +138,26 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                             $orderData = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
                         } else {
                             $orderData = $orderGateway->selectBy(['itemID' => $item['itemID'], 'orderStatus' => 'Approved'])->fetchAll();
-                        }
+                        } //TODO: this whole method of getting orders doesn't work, it needs to be reworked.
                             foreach ($orderData as $order){
                                 $table->addColumn('order'.$order['orderID'], __($item['itemName']))->addClass('col-span-7');
                                 $table->addColumn('order'.$order['orderID'].'quantity', __($order['quantity']))->addClass('col-span-1');
                                 $table->addColumn('order'.$order['orderID'].'price', __($item['salePrice']))->addClass('col-span-1');
-                                $itemTotalPrice = $item['salePrice'] * $order['quantity'];
+                                $itemTotalPrice = ($item['salePrice'] * $order['quantity']);
                                 $table->addColumn('order'.$order['orderID'].'tprice', __(number_format($itemTotalPrice, 2, '.', ',')))->addClass('col-span-1');
                                 $totalPrice += $itemTotalPrice;
+                                $totalTotalPrice += $itemTotalPrice;
                             }
                         }
                         $table->addColumn('subCategory'.$subCategoryData['subCategoryID'].'title', __('Total'))->addClass('col-span-9');
                         $table->addColumn('subCategory'.$subCategoryData['subCategoryID'].'totalPrice', __(number_format($totalPrice, 2, '.', ',')))->addClass('col-span-1');
-                        $totalTotalPrice += $totalPrice;
+                        
                     }
                 }
                 
                 echo $table->render([$orders]);
                 
             }
-            echo '<h3> Sub Total: ' . number_format($totalTotalPrice, 2, '.', ',') . '</h3>';    
+            echo '<h4> Sub Total: ' . number_format($totalTotalPrice, 2, '.', ',') . '</h4>';    
         
 }
