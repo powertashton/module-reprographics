@@ -117,15 +117,20 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 $subCategories[] = $itemData[0]['subCategoryID']; 
             }
             $totalTotalPrice = 0;
-            $categories = array_unique($categories);
-            $subcategories = array_unique($subCategories);
+            $categories = array_keys(array_flip($categories));
+            $subCategories = array_keys(array_flip($subCategories));
+            
             foreach ($categories as $category) {
                 $categoryData = $categoryGateway->selectBy(['categoryID' => $category])->fetchAll();
                 $table = DataTable::createDetails($category);
                 $table->addMetaData('gridClass', 'grid-cols-10');
                 $table->setTitle($categoryData[0]['categoryName']);
+
                 foreach ($subCategories as $subCategory){
+                
                     $subCategoryData = $subCategoryGateway->selectBy(['subCategoryID' => $subCategory, 'categoryID' => $category])->fetch();
+                     
+                 
                     if($subCategoryData){
                         $table->addColumn('subcat'.$subCategoryData['subCategoryID'], __($subCategoryData['subCategoryName']))->addClass('col-span-7')->addClass('current');
                         $table->addColumn($subCategoryData['subCategoryID'].'quantity', __('Quantity'))->addClass('col-span-1')->addClass('current');
@@ -133,12 +138,15 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                         $table->addColumn($subCategoryData['subCategoryID'].'tprice', __('Total Price'))->addClass('col-span-1')->addClass('current');
                         $itemData = $itemGateway->selectBy(['subCategoryID' => $subCategory])->fetchAll();
                         $totalPrice = 0;
+
                         foreach ($itemData as $item){
+
                         if (isset($_GET['deptID']) && ($_GET['deptID'] != 'All Departments')){
                             $orderData = $orderGateway->selectBy(['itemID' => $item['itemID'], 'deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
                         } else {
                             $orderData = $orderGateway->selectBy(['itemID' => $item['itemID'], 'orderStatus' => 'Approved'])->fetchAll();
-                        } //TODO: this whole method of getting orders doesn't work, it needs to be reworked.
+                        } 
+
                             foreach ($orderData as $order){
                                 $table->addColumn('order'.$order['orderID'], __($item['itemName']))->addClass('col-span-7');
                                 $table->addColumn('order'.$order['orderID'].'quantity', __($order['quantity']))->addClass('col-span-1');
