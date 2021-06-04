@@ -104,12 +104,14 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
             $row->addSubmit();
 
         echo $form->getOutput();
-        echo '<h3> Stationery</h3>';
-        if (isset($_GET['deptID']) && ($_GET['deptID'] != 'All Departments') ) { //TODO: make this page work when no dept is selected to show all records
-            $orders = $orderGateway->selectBy(['deptID' => $deptID, 'orderStatus' => 'Approved'])->fetchAll();
-        } else {
-            $orders = $orderGateway->selectBy(['orderStatus' => 'Approved'])->fetchAll();
-        }
+        $orders = NULL;
+        if (isset($_GET['deptID']) && isset($_GET['startDate']) && isset($_GET['endDate']) && ($_GET['deptID'] != 'All Departments') ) { //TODO: make this page work when no dept is selected to show all records
+            $orders = $orderGateway->selectWhere(['deptID = ' => $deptID, 'orderStatus = ' => 'Approved', 'orderDate >= ' => $startDate, 'orderDate <= ' => $endDate])->fetchAll();
+        } elseif (isset($_GET['startDate']) && isset($_GET['endDate'])) {
+            $orders = $orderGateway->selectWhere(['orderStatus = ' => 'Approved', 'orderDate >= ' => $startDate, 'orderDate <= ' => $endDate])->fetchAll();
+        } 
+        if ($orders != NULL){
+            echo '<h3> Stationery</h3>';
             $items =  array_unique(array_column($orders, 'itemID'));
             foreach ($items as $item){
                 $itemData = $itemGateway->selectBy(['itemID' => $item])->fetchAll();
@@ -167,5 +169,12 @@ if (!isActionAccessible($guid, $connection2, '/modules/Reprographics/reprographi
                 
             }
             echo '<h4> Sub Total: ' . number_format($totalTotalPrice, 2, '.', ',') . '</h4>';    
+        } elseif (isset($orders)){
+            echo '<h3> Stationery</h3></br>';
+            echo 'No stationery orders';
+        }
         
+        echo '<h3> Printing</h3></br>';
+        
+        echo '<h3> Toners</h3></br>';
 }

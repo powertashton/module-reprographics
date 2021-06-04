@@ -24,7 +24,6 @@ class PrinterGateway extends QueryableGateway //Replace NameGateway with the nam
             ->newSelect()
             ->from('Printing')
             ->cols(['id','date', 'department', 'BWA3Duplex', 'BWA3DuplexPrice', 'BWA3Simplex', 'BWA3SimplexPrice', 'BWA4Duplex', 'BWA4DuplexPrice', 'BWA4Simplex', 'BWA4SimplexPrice', 'FCA3Duplex', 'FCA3DuplexPrice', 'FCA3Simplex', 'FCA3SimplexPrice', 'FCA4Duplex', 'FCA4DuplexPrice', 'FCA4Simplex', 'FCA4SimplexPrice']);
-
         return $this->runSelect($select);
     }
     
@@ -33,8 +32,6 @@ class PrinterGateway extends QueryableGateway //Replace NameGateway with the nam
             ->newQuery()
             ->from('Printing')
             ->cols(['id', 'date', 'department', 'BWA3Duplex', 'BWA3DuplexPrice', 'BWA3Simplex', 'BWA3SimplexPrice', 'BWA4Duplex', 'BWA4DuplexPrice', 'BWA4Simplex', 'BWA4SimplexPrice', 'FCA3Duplex', 'FCA3DuplexPrice', 'FCA3Simplex', 'FCA3SimplexPrice', 'FCA4Duplex', 'FCA4DuplexPrice', 'FCA4Simplex', 'FCA4SimplexPrice']);
-        
-       
         return $this->runQuery($query, $criteria);
     }
     
